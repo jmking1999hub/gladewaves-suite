@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -281,7 +281,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
   </div>
   <div class="sbfoot">
     <p class="sbfp">🔒 Board Preview</p>
-    <button class="ttoggle" id="ttbtn" onclick="toggleTheme()">☀️ Light</button>
+    <button class="ttoggle" id="ttbtn" onclick="toggleTheme()">🌙 Dark</button>
   </div>
 </nav>
 
@@ -307,7 +307,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
     </div>
     <div class="sstrip">
       <div class="ssi"><div class="ssiv">87,170</div><div class="ssil">Food Insecure in Orleans Parish</div></div>
-      <div class="ssi"><div class="ssiv">52%</div><div class="ssil">N.O. Households Can't Afford Basics</div></div>
+      <div class="ssi"><div class="ssiv">249K</div><div class="ssil">Meals Served in 2023</div></div>
       <div class="ssi"><div class="ssiv">39%</div><div class="ssil">N.O. Children in Poverty</div></div>
       <div class="ssi"><div class="ssiv">12</div><div class="ssil">Active Big Red Box Locations</div></div>
     </div>
@@ -777,6 +777,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
     <button class="tt" onclick="tab(this,'tc09b')">🏛️ Council Outreach</button>
     <button class="tt" onclick="tab(this,'tc09c')">🏨 Biz Outreach</button>
     <button class="tt" onclick="tab(this,'tc09d')">📣 Public Campaign</button>
+    <button class="tt" onclick="tab(this,'tc09e')">📍 Address Lookup</button>
   </div>
 
   <!-- AI CHAT -->
@@ -953,6 +954,67 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
       <div class="outbox" id="fr-out" style="min-height:320px">Generated content appears here…</div>
     </div>
   </div>
+
+  <!-- ADDRESS LOOKUP -->
+  <div class="tc" id="tc09e">
+    <h2 class="stl">Address → Council District Lookup</h2>
+    <p class="ssub">Enter any New Orleans address — hotel, restaurant, resident, or business — and instantly identify the correct council member for outreach.</p>
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px">
+      <div>
+        <div class="fg"><label class="fl">Street Address</label><input class="fi" id="al-addr" placeholder="123 Canal St"/></div>
+        <div class="fg"><label class="fl">City / Area</label><select class="fs" id="al-city">
+          <option value="New Orleans">New Orleans</option>
+          <option value="Metairie">Metairie (Jefferson Parish)</option>
+          <option value="Chalmette">Chalmette (St. Bernard Parish)</option>
+          <option value="Harvey">Harvey (Jefferson Parish)</option>
+          <option value="Norco">Norco (St. Charles Parish)</option>
+          <option value="Jefferson">Jefferson (Jefferson Parish)</option>
+        </select></div>
+        <div class="fg"><label class="fl">Who is this for?</label><select class="fs" id="al-who">
+          <option value="hotel">Hotel</option>
+          <option value="restaurant">Restaurant</option>
+          <option value="constituent">Constituent / Resident</option>
+          <option value="business">General Business</option>
+          <option value="church">Church / Nonprofit</option>
+        </select></div>
+        <div class="fg"><label class="fl">What to generate</label><select class="fs" id="al-doc">
+          <option>Food rescue outreach letter to council member</option>
+          <option>Constituent support letter for the ordinance</option>
+          <option>Meeting request to council member</option>
+          <option>Business invitation to join food rescue program</option>
+        </select></div>
+        <div class="fg"><label class="fl">Name (person or business)</label><input class="fi" id="al-name" placeholder="The Roosevelt Hotel / Jane Smith"/></div>
+        <button class="btnp" id="al-btn" onclick="addrLookup()" style="background:linear-gradient(135deg,#E07840,#883010);width:100%">📍 Identify District & Generate</button>
+        <div style="margin-top:12px;background:rgba(58,120,200,.06);border:1px solid rgba(58,120,200,.15);border-radius:10px;padding:12px">
+          <div style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(58,120,200,.6);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px">🗺️ N.O. District Quick Reference</div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:10px;color:var(--muted);line-height:1.9">
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:8px">A</span><span>Lakeview, Gentilly, Mid-City (N) · <strong style="color:var(--text)">Aimee McCarron</strong></span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:8px">B</span><span>Uptown, Garden District, Broadmoor · <strong style="color:var(--text)">Lesli Harris</strong></span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:8px">C</span><span>CBD, French Quarter, Tremé, Bywater · <strong style="color:var(--text)">Freddie King III</strong></span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:8px">D</span><span>Algiers, English Turn, Westbank · <strong style="color:var(--text)">Eugene Green</strong></span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:8px">E</span><span>N.O. East, Lower 9th Ward · <strong style="color:var(--text)">Jason Hughes</strong></span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:8px">AL</span><span>Citywide · <strong style="color:var(--text)">JP Morrell &amp; Matthew Willard</strong></span>
+          </div>
+          <div style="margin-top:7px;padding-top:7px;border-top:1px solid var(--border2);font-size:9px;font-style:italic;color:rgba(224,120,64,.55)">Metairie, Harvey, Jefferson, Norco &amp; Chalmette are outside city limits — outreach goes to Jefferson or St. Bernard Parish councils.</div>
+        </div>
+      </div>
+      <div>
+        <div id="al-district-card" style="display:none;background:rgba(224,120,64,.07);border:1px solid rgba(224,120,64,.25);border-radius:11px;padding:13px;margin-bottom:11px;animation:fadeUp .25s ease">
+          <div style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(224,120,64,.65);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">📍 Council District Identified</div>
+          <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:2px;transition:color .3s" id="al-member-name">—</div>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(224,120,64,.55);margin-bottom:4px" id="al-member-district">—</div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:1px" id="al-member-email">—</div>
+          <div style="font-size:10px;color:var(--muted)" id="al-member-phone">—</div>
+        </div>
+        <div class="outbox" id="al-out" style="min-height:280px">Identified council member and generated document appear here…</div>
+        <div style="display:flex;gap:6px;margin-top:7px">
+          <button class="btng" style="flex:1;font-size:9px" onclick="navigator.clipboard?.writeText(document.getElementById('al-out').textContent);toast('Copied!')">Copy Letter</button>
+          <button class="btng" style="font-size:9px" onclick="cs('p09','Draft a follow-up message to '+document.getElementById('al-member-name').textContent+' regarding the Gladewaves food rescue ordinance.')">💬 Follow Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
   </div><!-- /tb -->
@@ -1012,7 +1074,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
 
 <script>
 // === THEME ===
-let dark=true;
+let dark=false;
 function toggleTheme(){dark=!dark;document.documentElement.setAttribute('data-theme',dark?'':'light');document.getElementById('ttbtn').textContent=dark?'☀️ Light':'🌙 Dark';}
 
 // === NAVIGATION ===
@@ -1377,11 +1439,12 @@ async function buildProposal(){
 let impEntries=[];
 try{const s=localStorage.getItem('gw-impact');if(s)impEntries=JSON.parse(s);}catch{}
 if(!impEntries.length)impEntries=[
-  {month:'2026-05',families:218,food:1680,boxes:11,hours:256,donors:14,funds:5200,seniors:142,notes:'New Big Red Box added at Greater Good Hope Baptist in Norco.'},
-  {month:'2026-04',families:192,food:1480,boxes:11,hours:218,donors:10,funds:4100,seniors:128,notes:'Senior Outreach luncheon at Kinship Center had record attendance.'},
-  {month:'2026-03',families:165,food:1220,boxes:10,hours:195,donors:8,funds:3400,seniors:110,notes:'Spring HandUp drive delivered 8 boxes via Unity for the Homeless.'},
-  {month:'2026-02',families:145,food:1010,boxes:10,hours:170,donors:6,funds:2900,seniors:96,notes:''},
-  {month:'2026-01',families:124,food:905,boxes:9,hours:150,donors:5,funds:2500,seniors:84,notes:'Started year with 9 active Big Red Box locations.'},
+  {month:'2026-05',families:248,food:2100,boxes:12,hours:256,donors:14,funds:5200,seniors:142,notes:'Annual fundraiser raised $18,000 on May 21st. New Big Red Box added at Greater Good Hope Baptist in Norco.'},
+  {month:'2026-04',families:222,food:1840,boxes:12,hours:218,donors:10,funds:4100,seniors:128,notes:'Senior Outreach luncheon at Kinship Center had record attendance.'},
+  {month:'2026-03',families:195,food:1620,boxes:11,hours:195,donors:8,funds:3400,seniors:110,notes:'Spring HandUp drive delivered 8 boxes via Unity for the Homeless.'},
+  {month:'2026-02',families:172,food:1380,boxes:11,hours:170,donors:6,funds:2900,seniors:96,notes:''},
+  {month:'2026-01',families:148,food:1190,boxes:11,hours:150,donors:5,funds:2500,seniors:84,notes:'14 Big Red Box locations active to start 2026.'},
+  {month:'2023-12',families:1820,food:18500,boxes:14,hours:1240,donors:88,funds:42000,seniors:580,notes:'Full year 2023: 249,020 total meals served across all programs. 14 Big Red Box locations, 7 Senior Outreach luncheons per month.'},
 ];
 const mN=m=>{if(!m)return'';const[y,mo]=m.split('-');return new Date(y,parseInt(mo)-1).toLocaleDateString('en-US',{month:'short',year:'numeric'});};
 const ICS=['#DC5050','#C8A830','#E07840','#5A9E6F','#5A8FE0'];
@@ -1546,6 +1609,78 @@ async function genFRPost(){
         messages:[{role:'user',content:`Write a ${platNames[frType]||'social media'} post for the Gladewaves Food Rescue Campaign.\nFocus: ${document.getElementById('fr-focus').value}\nExtra details: ${document.getElementById('fr-extra').value||'none'}\nFollow all platform-specific length and format guidelines. For Instagram include 10-15 hashtags. For Twitter keep under 280 chars. For NextDoor be conversational and neighborhood-focused. For petition write compelling signature appeal text. For press release use AP style with New Orleans dateline and a quote from Janie Glade.`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
   }catch{out.textContent='Failed. Try again.';}finally{btn.disabled=false;btn.textContent='📣 Generate';}
+}
+
+// === ADDRESS LOOKUP ===
+const COUNCIL_MEMBERS={
+  'A':{name:'Aimee McCarron',district:'District A',email:'Aimee.McCarron@nola.gov',phone:'(504) 658-1010',neighborhoods:['lakeview','gentilly','mid-city','navarre','city park','fillmore','st. anthony','pontchartrain park']},
+  'B':{name:'Lesli Harris',district:'District B',email:'Lesli.Harris@nola.gov',phone:'(504) 658-1020',neighborhoods:['uptown','garden district','broadmoor','university','audubon','irish channel','central city','carrollton','black pearl','touro']},
+  'C':{name:'Freddie King III',district:'District C',email:'Freddie.King@nola.gov',phone:'(504) 658-1030',neighborhoods:['cbd','central business district','french quarter','treme','marigny','bywater','warehouse district','lower garden district','canal street','bourbon','canal','poydras','st. charles','magazine','camp','tchoupitoulas']},
+  'D':{name:'Eugene J. Green',district:'District D',email:'eugene.green@nola.gov',phone:'(504) 658-1040',neighborhoods:['algiers','english turn','aurora','tall timbers','behrman','McDonogh','crown point','west bank']},
+  'E':{name:'Jason Hughes',district:'District E',email:'Jason.Hughes@nola.gov',phone:'(504) 658-1050',neighborhoods:['new orleans east','eastern new orleans','lower ninth','ninth ward','lower 9th','st. claude','holy cross','lakewood','read blvd','chef menteur','morrison']},
+};
+
+async function addrLookup(){
+  const addr=document.getElementById('al-addr').value.trim();
+  const city=document.getElementById('al-city').value;
+  if(!addr){toast('Please enter a street address');return;}
+  const btn=document.getElementById('al-btn');btn.disabled=true;btn.textContent='🔍 Looking up...';
+  const card=document.getElementById('al-district-card');card.style.display='none';
+  const out=document.getElementById('al-out');
+  out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+
+  const prompt=`A user needs to identify which New Orleans City Council district the following address is in, then generate the requested document.
+
+ADDRESS: ${addr}, ${city}, Louisiana
+WHO THIS IS FOR: ${document.getElementById('al-who').value}
+NAME: ${document.getElementById('al-name').value||'[Name not provided]'}
+DOCUMENT TO GENERATE: ${document.getElementById('al-doc').value}
+
+NEW ORLEANS CITY COUNCIL DISTRICTS & MEMBERS:
+- District A (Lakeview, Gentilly, Mid-City north, Navarre, City Park area): Aimee McCarron — Aimee.McCarron@nola.gov — (504) 658-1010
+- District B (Uptown, Garden District, Broadmoor, Audubon, Carrollton, Irish Channel, University area): Lesli Harris — Lesli.Harris@nola.gov — (504) 658-1020
+- District C (CBD, French Quarter, Warehouse District, Tremé, Marigny, Bywater, Lower Garden District — includes Canal St, Bourbon St, Poydras, St. Charles Ave downtown, Magazine St downtown): Freddie King III — Freddie.King@nola.gov — (504) 658-1030
+- District D (Algiers, English Turn, Aurora, Behrman, West Bank of Orleans Parish): Eugene J. Green — eugene.green@nola.gov — (504) 658-1040
+- District E (New Orleans East, Lower 9th Ward, Holy Cross, St. Claude, Chef Menteur corridor): Jason Hughes — Jason.Hughes@nola.gov — (504) 658-1050
+- At-Large (all districts): JP Morrell — JP.Morrell@nola.gov — (504) 658-1070
+- At-Large (all districts): Matthew Willard — Matthew.Willard@nola.gov — (504) 658-1060
+- Mayor (not council but powerful ally): Helena Moreno
+
+IMPORTANT: If the address is in Metairie, Harvey, Jefferson, Norco, or Chalmette — these are OUTSIDE New Orleans city limits and fall under Jefferson Parish or St. Bernard Parish councils, not the New Orleans City Council. Note this clearly.
+
+STEP 1: Identify the most likely council district for this address based on the street name, neighborhood, and city.
+STEP 2: State clearly: "District [X] — [Council Member Name]" on the first line.
+STEP 3: Generate the requested document addressed to that council member, fully written out and ready to send. Include the council member's email address at the top. Sign from Janie Glade, Executive Director, Gladewaves, 4505 S. Claiborne Ave, New Orleans, LA 70125, 504-875-1718, janie@gladewaves.org.
+
+Format your response as:
+DISTRICT: [letter] — [name] — [email] — [phone]
+---
+[Full document text]`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:SYS.p09,messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    const text=d.content?.[0]?.text||'Error.';
+
+    // Parse district line
+    const distLine=text.match(/DISTRICT:\s*([^\n]+)/i);
+    if(distLine){
+      const parts=distLine[1].split('—').map(s=>s.trim());
+      const distLetter=parts[0]?.replace('District','').trim();
+      const cm=COUNCIL_MEMBERS[distLetter];
+      document.getElementById('al-member-name').textContent=parts[1]||cm?.name||parts[0];
+      document.getElementById('al-member-district').textContent='District '+distLetter+' · '+addr+', '+city;
+      document.getElementById('al-member-email').textContent='✉️ '+(parts[2]||cm?.email||'');
+      document.getElementById('al-member-phone').textContent='📞 '+(parts[3]||cm?.phone||'');
+      card.style.display='block';
+    }
+
+    // Show document (everything after ---)
+    const docStart=text.indexOf('---');
+    out.textContent=docStart>-1?text.substring(docStart+4).trim():text;
+  }catch{out.textContent='Connection error. Please try again.';}
+  finally{btn.disabled=false;btn.textContent='📍 Identify District & Generate';}
 }
 
 // === TOAST ===
