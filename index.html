@@ -251,6 +251,13 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
 /* Modals */
 .mover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;align-items:center;justify-content:center;padding:18px}
 .mover.open{display:flex}
+/* API Key overlay */
+.ak-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99998;display:flex;align-items:center;justify-content:center;padding:20px}
+.ak-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:400px;box-shadow:0 20px 60px var(--shadow);transition:background .3s;text-align:center}
+.ak-wave{font-size:38px;display:block;margin:0 auto 10px;animation:wave 3s ease-in-out infinite}
+.ak-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;background:linear-gradient(135deg,var(--gold-l),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:3px}
+.ak-sub{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px}
+.ak-note{font-size:10px;color:var(--muted);line-height:1.65;margin-bottom:13px;padding:9px 11px;background:var(--dim);border-radius:8px;border-left:3px solid var(--gold);text-align:left}
 .mbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;width:100%;max-width:380px;box-shadow:0 18px 55px var(--shadow);transition:background .3s}
 .mtitle{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);margin-bottom:12px;font-style:italic;transition:color .3s}
 </style>
@@ -280,7 +287,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
     <button class="sbi" onclick="nav('p07',this)"><span class="sbii">📊</span><span class="sbit">Impact Dashboard</span></button>
   </div>
   <div class="sbfoot">
-    <p class="sbfp">🔒 Board Preview</p>
+    <p class="sbfp" style="cursor:pointer" onclick="document.getElementById('ak-overlay').style.display='flex'" title="Update API Key">🔑 API Key</p>
     <button class="ttoggle" id="ttbtn" onclick="toggleTheme()">🌙 Dark</button>
   </div>
 </nav>
@@ -1072,7 +1079,42 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
   <div style="display:flex;gap:8px"><button class="btnp" style="background:linear-gradient(135deg,#C8A830,#806810);color:#080C08;flex:1" onclick="grantAdd()">Add</button><button class="btng" onclick="document.getElementById('m-addgrant').classList.remove('open')">Cancel</button></div>
 </div></div>
 
+<!-- API KEY MODAL -->
+<div class="ak-overlay" id="ak-overlay">
+  <div class="ak-box">
+    <span class="ak-wave">🌊</span>
+    <div class="ak-title">Gladewaves AI Suite</div>
+    <div class="ak-sub">Powered by Anthropic Claude</div>
+    <div class="ak-note">Enter your Anthropic API key to enable all AI tools. Your key is saved in this browser only — never shared or stored on any server.<br><br>Get a key at <strong>console.anthropic.com</strong> → API Keys.</div>
+    <label class="fl" style="text-align:left;display:block;margin-bottom:4px">Anthropic API Key</label>
+    <input class="fi" id="ak-input" type="password" placeholder="sk-ant-api03-..." style="margin-bottom:5px" onkeydown="if(event.key==='Enter')saveKey()"/>
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px">
+      <input type="checkbox" id="ak-remember" checked style="accent-color:var(--gold)"/>
+      <label for="ak-remember" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);cursor:pointer">Remember in this browser</label>
+    </div>
+    <button class="btnp" onclick="saveKey()" style="background:linear-gradient(135deg,var(--gold-l),var(--gold));color:#080C08;width:100%;padding:10px;font-size:11px">Enter Suite →</button>
+    <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:8px;color:var(--meta)">Key starts with <strong>sk-ant-</strong> · Used only for AI generation calls</div>
+  </div>
+</div>
+
 <script>
+// === API KEY MANAGEMENT ===
+let AKEY='';
+function initKey(){
+  const saved=localStorage.getItem('gw-apikey');
+  if(saved){AKEY=saved;document.getElementById('ak-overlay').style.display='none';}
+  else{document.getElementById('ak-overlay').style.display='flex';}
+}
+function saveKey(){
+  const val=document.getElementById('ak-input').value.trim();
+  if(!val||!val.startsWith('sk-')){toast('Please enter a valid API key starting with sk-');return;}
+  AKEY=val;
+  if(document.getElementById('ak-remember').checked){try{localStorage.setItem('gw-apikey',val);}catch{}}
+  document.getElementById('ak-overlay').style.display='none';
+  toast('✅ API key saved — all AI tools are now active!');
+}
+function getHeaders(){return{'Content-Type':'application/json','x-api-key':AKEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
+
 // === THEME ===
 let dark=false;
 function toggleTheme(){dark=!dark;document.documentElement.setAttribute('data-theme',dark?'':'light');document.getElementById('ttbtn').textContent=dark?'☀️ Light':'🌙 Dark';}
@@ -1141,6 +1183,7 @@ const ACS={p01:['#C8973A','#7A5010'],p02:['#CC2222','#881010'],p03:['#3A9E68','#
 
 async function cs(pid,override){
   if(cLock[pid])return;
+  if(!AKEY){document.getElementById('ak-overlay').style.display='flex';toast('Please enter your API key first');return;}
   const pg=document.getElementById(pid);
   const ta=pg.querySelector('textarea');
   const msg=override||(ta?.value.trim());
@@ -1161,7 +1204,7 @@ async function cs(pid,override){
   let extra='';
   if(pid==='p02')extra='\n\nCurrent box data: '+boxes.map(b=>`${b.name}: ${b.status.toUpperCase()} ${b.status!=='outofservice'?'('+b.level+'%)':''}`).join(', ');
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:(SYS[pid]||'')+extra,messages:cHist[pid]})});
     const d=await res.json();
     const reply=d.content?.[0]?.text||'Something went wrong. Please try again.';
@@ -1323,7 +1366,7 @@ async function socGen(){
   document.getElementById('soc-out').innerHTML='<div style="display:flex;justify-content:center;padding:36px"><div style="width:24px;height:24px;border:3px solid rgba(58,158,104,.15);border-top:3px solid #3A9E68;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   document.getElementById('soc-acts').innerHTML='';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p03,
         messages:[{role:'user',content:`Generate a ${PLATS[curPlat].name} post for Gladewaves.\nTopic: ${topic}\nExtra context: ${document.getElementById('soc-ctx').value||'none'}\nFollow all format and length guidelines for this platform.`}]})});
     const data=await res.json();
@@ -1373,7 +1416,7 @@ async function planCampaign(){
   const out=document.getElementById('camp-out');out.style.display='block';
   out.innerHTML='<div style="display:flex;justify-content:center;padding:14px"><div style="width:22px;height:22px;border:3px solid rgba(168,100,220,.2);border-top:3px solid #A864DC;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p04,
         messages:[{role:'user',content:`Full fundraising campaign plan for Gladewaves.\nGoal: ${goal}\nTimeline: ${document.getElementById('camp-time').value}\nAudience: ${document.getElementById('camp-aud').value}\nContext: ${document.getElementById('camp-ctx').value}`}]})});
     const d=await res.json();out.innerHTML=fmt(d.content?.[0]?.text||'Error.');
@@ -1428,7 +1471,7 @@ async function buildProposal(){
   const btn=document.getElementById('gb-btn');btn.disabled=true;btn.textContent='Writing...';
   const out=document.getElementById('gb-out');out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(200,168,48,.2);border-top:3px solid #C8A830;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p06,
         messages:[{role:'user',content:`Write the ${document.getElementById('gb-sec').value} for a Gladewaves grant.\nFunder: ${funder}\nAmount: ${document.getElementById('gb-amount').value}\nProgram focus: ${document.getElementById('gb-prog').value}\nSpecial requirements: ${document.getElementById('gb-ctx').value}`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1480,7 +1523,7 @@ async function genReport(){
   const btn=document.getElementById('rpt-btn');btn.disabled=true;btn.textContent='Generating...';
   const out=document.getElementById('rpt-out');out.innerHTML='<div style="display:flex;justify-content:center;padding:14px"><div style="width:22px;height:22px;border:3px solid rgba(220,80,80,.2);border-top:3px solid #DC5050;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p07,
         messages:[{role:'user',content:`Write a ${document.getElementById('rpt-type').value} for Gladewaves for ${document.getElementById('rpt-period').value}.\nFamilies served: ${document.getElementById('rpt-fam').value}\nFood distributed: ${document.getElementById('rpt-food').value} lbs\nVolunteer hours: ${document.getElementById('rpt-hours').value}\nSeniors served at luncheons: ${document.getElementById('rpt-seniors').value}\nHighlights: ${document.getElementById('rpt-hi').value}`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1519,7 +1562,7 @@ async function findGrants(){
   el.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:36px"><div class="spinr"></div><div style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(64,200,192,.45);letter-spacing:.09em">Searching for Gladewaves opportunities…</div></div>`;
   const prompt=`You are a grant research specialist for Gladewaves, a New Orleans Louisiana nonprofit (gladewaves.org). Founded 2018 by Janie Glade. 4505 S. Claiborne Ave, New Orleans, LA 70125. Programs: (1) Big Red Box — 12 barrier-free community food pantry locations across Metro N.O. at churches, police stations, schools. (2) HandUp — $500 housewares + $100 grocery cards for people leaving transitional housing (Unity for Homeless, Hotel Hope, Innocence Project). (3) Senior Outreach — free monthly luncheons for 55+, 6 sites, Sept-June. (4) Thanksgiving Day Lunch. Need: 87,170 food insecure in Orleans Parish, 52% can't afford basics, 39% children in poverty.\n\nFind 6 realistic, specific grant opportunities. Focus areas: ${cats}.${size?` Size: ${size}.`:''}${type?` Funder type: ${type}.`:''}${extra?` Additional: ${extra}`:''}\n\nRespond ONLY with a valid JSON array — no text before or after:\n[{"name":"Program name","funder":"Organization","amount":"Range","deadline":"Next deadline","description":"2-3 sentences why Gladewaves qualifies","url":"official URL or empty string","tags":["tag1","tag2","tag3"],"fit":"high|medium|low","fitReason":"One sentence on fit"}]`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Return only valid JSON arrays with no markdown, no preamble, no explanation.',messages:[{role:'user',content:prompt}]})});
     const data=await res.json();
     let grants=[];
@@ -1578,7 +1621,7 @@ async function genCouncil(){
   const out=document.getElementById('co-out');
   out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
         messages:[{role:'user',content:`Generate a ${document.getElementById('co-type').value} for Gladewaves.\nRecipient: ${name}\nDistrict/context: ${document.getElementById('co-district').value||'New Orleans City Council'}\nKey angle to emphasize: ${document.getElementById('co-angle').value}\nFrom: Janie Glade, Executive Director, Gladewaves\nDate: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1591,7 +1634,7 @@ async function genBizLetter(){
   const out=document.getElementById('biz-out');
   out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
         messages:[{role:'user',content:`Write a ${document.getElementById('biz-tone').value} to ${biz} inviting them to join the Gladewaves Food Rescue Initiative.\nContact: ${document.getElementById('biz-contact').value||'General Manager'}\nBusiness type: ${document.getElementById('biz-type').value}\nWhat we are asking for: ${document.getElementById('biz-ask').value}\nFrom: Janie Glade, Executive Director, Gladewaves, 4505 S. Claiborne Ave, New Orleans, LA 70125, 504-875-1718\nLead with liability protection. Mention federal Good Samaritan Act. Keep professional and brief.`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1604,7 +1647,7 @@ async function genFRPost(){
   out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   const platNames={facebook:'Facebook',instagram:'Instagram',nextdoor:'NextDoor',twitter:'Twitter/X',petition:'Community Petition',press:'Press Release'};
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
         messages:[{role:'user',content:`Write a ${platNames[frType]||'social media'} post for the Gladewaves Food Rescue Campaign.\nFocus: ${document.getElementById('fr-focus').value}\nExtra details: ${document.getElementById('fr-extra').value||'none'}\nFollow all platform-specific length and format guidelines. For Instagram include 10-15 hashtags. For Twitter keep under 280 chars. For NextDoor be conversational and neighborhood-focused. For petition write compelling signature appeal text. For press release use AP style with New Orleans dateline and a quote from Janie Glade.`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1658,7 +1701,7 @@ DISTRICT: [letter] — [name] — [email] — [phone]
 [Full document text]`;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:SYS.p09,messages:[{role:'user',content:prompt}]})});
     const d=await res.json();
     const text=d.content?.[0]?.text||'Error.';
@@ -1687,6 +1730,7 @@ DISTRICT: [letter] — [name] — [email] — [phone]
 function toast(msg){let t=document.getElementById('_toast');if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid rgba(200,151,58,.32);color:var(--gold);font-family:DM Mono,monospace;font-size:9px;padding:7px 16px;border-radius:30px;z-index:99999;white-space:nowrap;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 18px var(--shadow)';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);}
 
 // === INIT ===
+initKey();
 rbRenderAll();donorRender();volRender();shiftRender();grantRender();impRenderAll();gfSavedRender();
 </script>
 </body>
