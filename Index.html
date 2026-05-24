@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Gladewaves — AI Operations Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#070C07;--sidebar:#050A05;--card:#0D160D;--card2:#111A11;
+  --border:rgba(200,151,58,.14);--border2:rgba(255,255,255,.06);
+  --gold:#C8973A;--gold-l:#F0C96A;--red:#CC2222;--red-l:#E05050;
+  --cream:#F0EBD8;--text:#C8D8A8;--muted:rgba(200,216,168,.38);
+  --dim:rgba(200,216,168,.1);--ibg:rgba(255,255,255,.04);
+  --shadow:rgba(0,0,0,.5);--sbt:rgba(200,216,168,.55);
+  --slbl:rgba(200,151,58,.25);--meta:rgba(200,151,58,.3);
+}
+[data-theme="light"]{
+  --bg:#F7F3EC;--sidebar:#FFFFFF;--card:#FFFFFF;--card2:#F0EBE0;
+  --border:rgba(160,100,20,.16);--border2:rgba(0,0,0,.07);
+  --gold:#8A5A08;--gold-l:#B07010;--red:#AA1010;--red-l:#CC3030;
+  --cream:#1A1008;--text:#2A2010;--muted:rgba(50,35,8,.55);
+  --dim:rgba(60,40,10,.07);--ibg:rgba(0,0,0,.04);
+  --shadow:rgba(0,0,0,.1);--sbt:rgba(50,35,8,.58);
+  --slbl:rgba(100,70,15,.4);--meta:rgba(100,70,15,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);display:flex;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:rgba(200,151,58,.2);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-7px);opacity:1}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes wave{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:translateX(0)}}
+@keyframes critpulse{0%,100%{border-color:rgba(220,50,50,.12)}50%{border-color:rgba(220,50,50,.45)}}
+
+/* SIDEBAR */
+#sb{width:210px;min-width:210px;background:var(--sidebar);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;z-index:20;transition:background .3s}
+.sbh{padding:16px 13px 11px;border-bottom:1px solid var(--border)}
+.sbl{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sbw{font-size:20px;animation:wave 3s ease-in-out infinite;display:block}
+.sbn{font-family:'Playfair Display',serif;font-size:14px;font-weight:900;
+  background:linear-gradient(135deg,var(--gold-l),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sbg{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);letter-spacing:.18em;text-transform:uppercase}
+.sbnav{flex:1;padding:7px}
+.sbsec{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);letter-spacing:.2em;text-transform:uppercase;padding:9px 8px 4px}
+.sbi{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:8px;cursor:pointer;
+  transition:all .18s;border:1px solid transparent;margin-bottom:1px;width:100%;background:none;text-align:left}
+.sbi:hover{background:rgba(200,151,58,.07);border-color:rgba(200,151,58,.12)}
+.sbi.on{background:rgba(200,151,58,.12);border-color:rgba(200,151,58,.22)}
+.sbii{font-size:13px;width:20px;text-align:center;flex-shrink:0}
+.sbit{font-family:'Outfit',sans-serif;font-size:11px;color:var(--sbt);font-weight:500;transition:color .2s}
+.sbi.on .sbit{color:var(--gold)}
+.sbbadge{margin-left:auto;background:rgba(200,151,58,.14);border-radius:8px;padding:1px 5px;
+  font-family:'DM Mono',monospace;font-size:7px;color:var(--gold)}
+.sbfoot{padding:9px 13px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sbfp{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);letter-spacing:.07em}
+.ttoggle{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:3px 9px;
+  cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);transition:all .2s;display:flex;align-items:center;gap:4px}
+.ttoggle:hover{border-color:var(--gold)}
+
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.th{background:var(--sidebar);border-bottom:1px solid var(--border);padding:0 18px;height:50px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;transition:background .3s}
+.thl{display:flex;align-items:center;gap:9px}
+.thi{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.tht{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);font-style:italic;transition:color .3s}
+.ths{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);letter-spacing:.14em;text-transform:uppercase}
+.orgpill{background:rgba(204,34,34,.1);border:1px solid rgba(204,34,34,.22);border-radius:20px;padding:3px 9px;
+  font-family:'DM Mono',monospace;font-size:8px;color:var(--red-l);letter-spacing:.05em}
+.tb{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* PAGES */
+.pg{display:none;height:100%;animation:slideIn .2s ease}
+.pg.on{display:flex;flex-direction:column}
+.tbar{background:var(--sidebar);border-bottom:1px solid var(--border2);padding:0 16px;display:flex;flex-shrink:0;transition:background .3s}
+.tt{background:none;border:none;cursor:pointer;padding:8px 12px;font-family:'DM Mono',monospace;font-size:9px;
+  color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.07em}
+.tt.on{border-bottom-color:var(--ac,var(--gold));color:var(--ac,var(--gold))}
+.tt:hover{color:var(--ac,var(--gold))}
+.tc{display:none;flex:1;overflow-y:auto;padding:16px 18px}
+.tc.on{display:block;animation:fadeUp .2s ease}
+
+/* SHARED */
+.stl{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:3px;transition:color .3s}
+.ssub{font-family:'Outfit',sans-serif;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:13px}
+.card{background:var(--card);border:1px solid var(--border2);border-radius:12px;transition:background .3s,border-color .2s}
+.card:hover{border-color:rgba(200,151,58,.18)}
+
+/* Quick Actions */
+.qag{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:16px}
+.qab{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:13px;
+  cursor:pointer;text-align:left;transition:all .18s;width:100%}
+.qab:hover{border-color:rgba(200,151,58,.28);transform:translateY(-2px);background:var(--card2)}
+.qaicon{font-size:20px;margin-bottom:6px;display:block}
+.qatitle{font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--cream);margin-bottom:2px;font-style:italic;transition:color .3s}
+.qadesc{font-family:'Outfit',sans-serif;font-size:10px;color:var(--muted);line-height:1.4}
+.qago{font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);margin-top:4px;letter-spacing:.04em}
+
+/* Chat */
+.cho{display:flex;flex-direction:column;flex:1;min-height:0}
+.chm{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+.mrow{display:flex;gap:7px;align-items:flex-start}
+.mrow.u{justify-content:flex-end}
+.av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.av.ai{background:linear-gradient(135deg,var(--ac,var(--gold)),var(--ac2,#7A5010))}
+.av.u{background:var(--card2);border:1px solid var(--border)}
+.bbl{max-width:78%;padding:9px 13px;font-family:'Outfit',sans-serif;font-size:12px;line-height:1.7}
+.bbl.ai{background:var(--card);border:1px solid var(--border2);border-radius:3px 11px 11px 11px;color:var(--text);transition:background .3s}
+.bbl.u{background:linear-gradient(135deg,var(--ac,var(--gold)),var(--ac2,#7A5010));color:#fff;border-radius:11px 11px 3px 11px}
+.dots{display:flex;gap:4px;padding:9px 12px;background:var(--card);border:1px solid var(--border2);border-radius:3px 11px 11px 11px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--ac,var(--gold));animation:bounce 1.2s infinite}
+.chia{padding:9px 13px;border-top:1px solid var(--border2);flex-shrink:0}
+.chrow{display:flex;gap:7px;align-items:flex-end;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:7px 7px 7px 12px;transition:background .3s}
+.chrow textarea{flex:1;background:none;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:12px;color:var(--text);line-height:1.55;resize:none;caret-color:var(--gold)}
+.chrow textarea::placeholder{color:var(--muted)}
+.sendbtn{width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,var(--ac,var(--gold)),var(--ac2,#7A5010));border:none;cursor:pointer;font-size:12px;flex-shrink:0;color:#fff;transition:all .2s}
+.sendbtn:disabled{opacity:.3;cursor:not-allowed}
+
+/* Forms */
+.fl{display:block;font-family:'DM Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;color:var(--meta)}
+.fi,.fs,.fta{width:100%;background:var(--ibg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'Outfit',sans-serif;font-size:12px;color:var(--text);outline:none;transition:border-color .2s,background .3s;resize:none;margin-bottom:9px}
+.fi:focus,.fs:focus,.fta:focus{border-color:rgba(200,151,58,.38)}
+.fs{color-scheme:inherit}
+.fg{margin-bottom:9px}.fg .fi,.fg .fs,.fg .fta{margin-bottom:0}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+
+/* Buttons */
+.btnp{border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;transition:all .2s;color:#fff}
+.btnp:hover:not(:disabled){transform:translateY(-1px);opacity:.9}
+.btnp:disabled{opacity:.33;cursor:not-allowed}
+.btng{background:var(--ibg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);transition:all .2s}
+.btng:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Pills */
+.pill{border-radius:20px;padding:2px 8px;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:3px}
+
+/* Stats */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px;margin-bottom:16px}
+.sc{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:11px;text-align:center;transition:background .3s}
+.sv{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;margin-bottom:2px}
+.sl{font-family:'DM Mono',monospace;font-size:7px;color:var(--slbl);text-transform:uppercase;letter-spacing:.08em}
+
+/* Output */
+.outbox{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px;font-family:'Outfit',sans-serif;font-size:12px;color:var(--muted);line-height:1.8;white-space:pre-wrap;max-height:350px;overflow-y:auto;min-height:70px;transition:background .3s}
+
+/* Cards grid */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:10px}
+
+/* Bar chart */
+.bch{display:flex;flex-direction:column;gap:5px}
+.bcr{display:flex;align-items:center;gap:6px}
+.bcl{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);width:60px;text-align:right;flex-shrink:0}
+.bcw{flex:1;height:16px;background:var(--dim);border-radius:3px;overflow:hidden}
+.bcf{height:100%;border-radius:3px;transition:width .7s ease;display:flex;align-items:center;padding-right:5px;justify-content:flex-end}
+.bcn{font-family:'DM Mono',monospace;font-size:7px;color:rgba(255,255,255,.6)}
+
+/* Tool accents */
+#p01{--ac:#C8973A;--ac2:#7A5010}
+#p02{--ac:#CC2222;--ac2:#881010}
+#p03{--ac:#3A9E68;--ac2:#1A5030}
+#p04{--ac:#A864DC;--ac2:#6020A0}
+#p05{--ac:#3A78C8;--ac2:#1A4080}
+#p06{--ac:#C8A830;--ac2:#806810}
+#p07{--ac:#DC5050;--ac2:#901818}
+#p08{--ac:#40C8C0;--ac2:#107870}
+#p09{--ac:#E07840;--ac2:#883010}
+
+/* HOME */
+.hhero{text-align:center;padding:32px 18px 20px}
+.hwave{font-size:46px;display:block;margin:0 auto 12px;filter:drop-shadow(0 0 18px rgba(200,151,58,.35));animation:wave 3.5s ease-in-out infinite}
+.htitle{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,44px);font-weight:900;
+  background:linear-gradient(135deg,var(--gold-l),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:5px}
+.hsub{font-family:'DM Mono',monospace;font-size:8px;color:var(--meta);letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
+.hmiss{font-family:'Outfit',sans-serif;font-size:12px;color:var(--muted);max-width:500px;margin:0 auto 5px;line-height:1.7}
+.hdiv{width:45px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:13px auto}
+.sstrip{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;padding:0 18px}
+.ssi{background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:9px 14px;text-align:center;flex:1;min-width:100px;transition:background .3s}
+.ssiv{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red-l);line-height:1;margin-bottom:2px}
+.ssil{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);letter-spacing:.07em;text-transform:uppercase}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;padding:0 16px 20px}
+.hcard{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px;
+  cursor:pointer;text-align:left;transition:all .2s;position:relative;overflow:hidden}
+.hcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--hc,var(--gold));border-radius:12px 12px 0 0}
+.hcard:hover{transform:translateY(-3px);box-shadow:0 8px 30px var(--shadow);border-color:rgba(200,151,58,.18)}
+.hcn{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);margin-bottom:6px;letter-spacing:.09em}
+.hci{font-size:24px;margin-bottom:8px;display:block}
+.hct{font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--cream);margin-bottom:3px;font-style:italic;transition:color .3s}
+.hcd{font-family:'Outfit',sans-serif;font-size:10px;color:var(--muted);line-height:1.5}
+.secnote{margin:0 16px 16px;background:rgba(58,158,104,.07);border:1px solid rgba(58,158,104,.17);
+  border-radius:8px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:8px;color:rgba(90,184,112,.6);letter-spacing:.04em}
+
+/* About */
+.pcard{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:10px;transition:background .3s}
+.ptitle{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:7px;transition:color .3s}
+.pbody{font-family:'Outfit',sans-serif;font-size:12px;color:var(--muted);line-height:1.75}
+.loclst{list-style:none;margin-top:9px}
+.loclst li{font-family:'Outfit',sans-serif;font-size:11px;color:var(--muted);padding:3px 0;border-bottom:1px solid var(--border2);line-height:1.5}
+.loclst li:last-child{border-bottom:none}
+.locn{font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);margin-right:5px}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.bcard{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px;transition:background .3s,border-color .2s}
+.bcard:hover{border-color:rgba(200,151,58,.22)}
+.bname{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:2px;transition:color .3s}
+.brole{font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px}
+.bbio{font-family:'Outfit',sans-serif;font-size:10px;color:var(--muted);line-height:1.6;max-height:72px;overflow:hidden;position:relative}
+.bbio::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:linear-gradient(transparent,var(--card))}
+.crow{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--border2)}
+.crow:last-child{border-bottom:none}
+.cicon{font-size:16px;width:28px;text-align:center;flex-shrink:0}
+.clbl{font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);text-transform:uppercase;letter-spacing:.09em;margin-bottom:1px}
+.cval{font-family:'Outfit',sans-serif;font-size:12px;color:var(--text)}
+
+/* Red Box */
+.boxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:10px}
+.boxcard{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:13px;transition:all .2s}
+.boxcard:hover{transform:translateY(-2px)}
+.barbg{height:4px;background:var(--dim);border-radius:3px;overflow:hidden;margin:6px 0 9px}
+.barfill{height:100%;border-radius:3px;transition:width .6s ease}
+.crit{animation:critpulse 1.8s infinite}
+
+/* Social */
+.platg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px}
+.plato{border-radius:8px;padding:8px 4px;cursor:pointer;text-align:center;transition:all .2s;background:var(--ibg);border:1.5px solid var(--border)}
+.plato.on{background:rgba(58,158,104,.1);border-color:#3A9E68}
+.platoicon{font-size:14px;margin-bottom:2px}
+.platoname{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);letter-spacing:.02em}
+
+/* Grant finder */
+.gfr{background:var(--card);border:1px solid rgba(64,200,192,.12);border-radius:12px;padding:14px;margin-bottom:9px;transition:all .2s;animation:fadeUp .28s ease both}
+.gfr:hover{border-color:rgba(64,200,192,.28);transform:translateY(-1px)}
+.gfname{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:2px;transition:color .3s}
+.gffunder{font-family:'DM Mono',monospace;font-size:8px;color:rgba(64,200,192,.55);letter-spacing:.06em;margin-bottom:6px}
+.gfdesc{font-family:'Outfit',sans-serif;font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:7px}
+.gftags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px}
+.gftag{background:rgba(64,200,192,.07);border:1px solid rgba(64,200,192,.2);border-radius:20px;padding:1px 7px;font-family:'DM Mono',monospace;font-size:7px;color:#40C8C0}
+.gfacts{display:flex;gap:6px}
+.gfcatg{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:5px;margin-bottom:10px}
+.gfcat{border-radius:8px;padding:6px 8px;cursor:pointer;text-align:left;transition:all .2s;background:var(--ibg);border:1px solid var(--border)}
+.gfcat.on{background:rgba(64,200,192,.1);border-color:rgba(64,200,192,.38)}
+.gfcati{font-size:13px;margin-bottom:2px}
+.gfcatn{font-family:'DM Mono',monospace;font-size:8px;color:rgba(64,200,192,.55);letter-spacing:.03em}
+.spinr{width:32px;height:32px;border:3px solid rgba(64,200,192,.15);border-top:3px solid #40C8C0;border-radius:50%;animation:spin 1s linear infinite}
+
+/* Modals */
+.mover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;align-items:center;justify-content:center;padding:18px}
+.mover.open{display:flex}
+.mbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;width:100%;max-width:380px;box-shadow:0 18px 55px var(--shadow);transition:background .3s}
+.mtitle{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);margin-bottom:12px;font-style:italic;transition:color .3s}
+</style>
+</head>
+<body>
+
+<nav id="sb">
+  <div class="sbh">
+    <div class="sbl"><span class="sbw">🌊</span><div><div class="sbn">Gladewaves</div><div class="sbg">AI Suite · New Orleans</div></div></div>
+  </div>
+  <div class="sbnav">
+    <div class="sbsec">Overview</div>
+    <button class="sbi on" onclick="nav('p00',this)"><span class="sbii">🏠</span><span class="sbit">Home</span></button>
+    <button class="sbi" onclick="nav('pab',this)"><span class="sbii">🌊</span><span class="sbit">About Gladewaves</span></button>
+    <div class="sbsec">Operations</div>
+    <button class="sbi" onclick="nav('p01',this)"><span class="sbii">🧭</span><span class="sbit">Executive Assistant</span></button>
+    <button class="sbi" onclick="nav('p02',this)"><span class="sbii">📦</span><span class="sbit">Big Red Box Monitor</span></button>
+    <button class="sbi" onclick="nav('p03',this)"><span class="sbii">📣</span><span class="sbit">Social Media</span></button>
+    <button class="sbi" onclick="nav('p09',this)"><span class="sbii">🍽️</span><span class="sbit">Food Rescue Campaign</span><span class="sbbadge">NEW</span></button>
+    <div class="sbsec">Fundraising</div>
+    <button class="sbi" onclick="nav('p04',this)"><span class="sbii">💛</span><span class="sbit">Donor & Fundraising</span></button>
+    <button class="sbi" onclick="nav('p06',this)"><span class="sbii">📝</span><span class="sbit">Grant Writing</span></button>
+    <button class="sbi" onclick="nav('p08',this)"><span class="sbii">🔍</span><span class="sbit">Grant Finder</span><span class="sbbadge">NEW</span></button>
+    <div class="sbsec">People</div>
+    <button class="sbi" onclick="nav('p05',this)"><span class="sbii">🙌</span><span class="sbit">Volunteers</span></button>
+    <div class="sbsec">Reporting</div>
+    <button class="sbi" onclick="nav('p07',this)"><span class="sbii">📊</span><span class="sbit">Impact Dashboard</span></button>
+  </div>
+  <div class="sbfoot">
+    <p class="sbfp">🔒 Board Preview</p>
+    <button class="ttoggle" id="ttbtn" onclick="toggleTheme()">☀️ Light</button>
+  </div>
+</nav>
+
+<div id="main">
+  <div class="th">
+    <div class="thl">
+      <div class="thi" id="thi" style="background:linear-gradient(135deg,#C8973A,#7A5010)">🏠</div>
+      <div><div class="tht" id="tht">Home</div><div class="ths" id="ths">Gladewaves AI Operations Suite</div></div>
+    </div>
+    <span class="orgpill">📍 Metro New Orleans · gladewaves.org · 504-875-1718</span>
+  </div>
+  <div class="tb">
+
+<!-- HOME -->
+<div class="pg on" id="p00">
+  <div style="flex:1;overflow-y:auto">
+    <div class="hhero">
+      <span class="hwave">🌊</span>
+      <h1 class="htitle">Gladewaves</h1>
+      <p class="hsub">AI Operations Suite · Board Preview · New Orleans, LA · Est. 2018</p>
+      <p class="hmiss">"Boots on the ground" — Gladewaves believes all people have the right to food, shelter, education, companionship, and the tools necessary to ensure a productive life.</p>
+      <div class="hdiv"></div>
+    </div>
+    <div class="sstrip">
+      <div class="ssi"><div class="ssiv">87,170</div><div class="ssil">Food Insecure in Orleans Parish</div></div>
+      <div class="ssi"><div class="ssiv">52%</div><div class="ssil">N.O. Households Can't Afford Basics</div></div>
+      <div class="ssi"><div class="ssiv">39%</div><div class="ssil">N.O. Children in Poverty</div></div>
+      <div class="ssi"><div class="ssiv">12</div><div class="ssil">Active Big Red Box Locations</div></div>
+    </div>
+    <div class="secnote">🔒 &nbsp; All tools run locally. No org data stored publicly. AI calls are encrypted. Safe for board sharing.</div>
+    <div class="hgrid">
+      <div class="hcard" onclick="navId('pab')" style="--hc:#CC2222"><div class="hcn">INFO</div><span class="hci">🌊</span><div class="hct">About Gladewaves</div><div class="hcd">Mission, programs, board, contact</div></div>
+      <div class="hcard" onclick="navId('p01')" style="--hc:#C8973A"><div class="hcn">01</div><span class="hci">🧭</span><div class="hct">Executive Assistant</div><div class="hcd">Emails, agendas, partner outreach</div></div>
+      <div class="hcard" onclick="navId('p02')" style="--hc:#CC2222"><div class="hcn">02</div><span class="hci">📦</span><div class="hct">Big Red Box Monitor</div><div class="hcd">Live tracking — 12 Metro N.O. locations</div></div>
+      <div class="hcard" onclick="navId('p03')" style="--hc:#3A9E68"><div class="hcn">03</div><span class="hci">📣</span><div class="hct">Social Media</div><div class="hcd">Facebook, Instagram, Twitter, NextDoor</div></div>
+      <div class="hcard" onclick="navId('p04')" style="--hc:#A864DC"><div class="hcn">04</div><span class="hci">💛</span><div class="hct">Donor & Fundraising</div><div class="hcd">CRM, campaigns, stewardship</div></div>
+      <div class="hcard" onclick="navId('p06')" style="--hc:#C8A830"><div class="hcn">05</div><span class="hci">📝</span><div class="hct">Grant Writing</div><div class="hcd">Proposals, need statements, tracker</div></div>
+      <div class="hcard" onclick="navId('p08')" style="--hc:#40C8C0"><div class="hcn">06</div><span class="hci">🔍</span><div class="hct">Grant Finder</div><div class="hcd">AI search for Louisiana grant opportunities</div></div>
+      <div class="hcard" onclick="navId('p09')" style="--hc:#E07840"><div class="hcn">NEW</div><span class="hci">🍽️</span><div class="hct">Food Rescue Campaign</div><div class="hcd">Hotel & restaurant food rescue — ordinance push</div></div>
+      <div class="hcard" onclick="navId('p05')" style="--hc:#3A78C8"><div class="hcn">07</div><span class="hci">🙌</span><div class="hct">Volunteers</div><div class="hcd">Roster, scheduling, onboarding</div></div>
+      <div class="hcard" onclick="navId('p07')" style="--hc:#DC5050"><div class="hcn">08</div><span class="hci">📊</span><div class="hct">Impact Dashboard</div><div class="hcd">Metrics, charts, board reports</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="pg" id="pab">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'ta-miss')">🌊 Mission</button>
+    <button class="tt" onclick="tab(this,'ta-prog')">📋 Programs</button>
+    <button class="tt" onclick="tab(this,'ta-board')">👥 Board</button>
+    <button class="tt" onclick="tab(this,'ta-contact')">📞 Contact</button>
+  </div>
+  <div class="tc on" id="ta-miss">
+    <h2 class="stl">Who We Are</h2><p class="ssub">A Louisiana community nonprofit — Metro New Orleans, Est. 2018</p>
+    <div class="pcard"><div class="pbody">Gladewaves was formed to give direct aid to people who need it. <strong>"Boots on the ground"</strong> is our mantra. Our highly skilled staff and Board of Directors are hands-on in every aspect of our non-profit. Together we work to bring resources to the Greater New Orleans area that are both useful and needed.<br><br>Every member of our staff is well versed in every aspect of our programming and this makes us stronger as a team and smarter as an organization. Our commitment is to continue working to develop programs that will have a direct impact on improving the lives of the people in our community.</div></div>
+    <div class="pcard" style="border-left:3px solid var(--red)"><div class="ptitle">Our Mission</div><div class="pbody" style="font-style:italic;font-size:13px">"Gladewaves believes that all people have the right to food, shelter, education, companionship, and the tools necessary to ensure a productive life."</div></div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:14px;color:var(--cream);font-style:italic;margin-bottom:9px;margin-top:4px;transition:color .3s">Community Need in New Orleans</h3>
+    <div class="sg" style="grid-template-columns:repeat(auto-fill,minmax(165px,1fr))">
+      <div class="sc"><div class="sv" style="color:var(--red-l)">87,170</div><div class="sl">Food Insecure in Orleans Parish</div></div>
+      <div class="sc"><div class="sv" style="color:var(--gold)">52%</div><div class="sl">N.O. Households Can't Afford Basics</div></div>
+      <div class="sc"><div class="sv" style="color:#E07840">39%</div><div class="sl">N.O. Children Living in Poverty</div></div>
+      <div class="sc"><div class="sv" style="color:#A864DC">60%</div><div class="sl">Higher Dementia Risk for Isolated Seniors</div></div>
+    </div>
+  </div>
+  <div class="tc" id="ta-prog">
+    <h2 class="stl">Our Four Programs</h2><p class="ssub">Serving Metro New Orleans year-round</p>
+    <div class="pcard" style="border-left:3px solid var(--red)">
+      <div class="ptitle">📦 Big Red Box Program</div>
+      <div class="pbody">Gladewaves' Big Red Box initiative addresses food insecurity in Metro New Orleans by providing free food pantries to underprivileged and at-risk communities with diverse demographics. We involve locals in creating and maintaining a coalition to fight hunger, in collaboration with local churches, schools, and police stations.<br><br><em>"We encourage everyone to take what they need and give what they can."</em><br><br>Program Director: <strong>Mark Azzinari</strong> &nbsp;|&nbsp; Barrier-Free Food Pantry</div>
+      <ul class="loclst" style="margin-top:10px">
+        <li><span class="locn">01</span>St. Luke's Episcopal Church — 1222 N. Dorgenois St, New Orleans, LA 70119</li>
+        <li><span class="locn">02</span>St. Rita's Catholic Church — 2729 Lowerline St, New Orleans, LA 70125</li>
+        <li><span class="locn">03</span>St. Philip's Episcopal Church — 3643 Aurora Dr, New Orleans, LA 70131</li>
+        <li><span class="locn">04</span>2nd District Police Station — 3401 Broadway St, New Orleans, LA 70125</li>
+        <li><span class="locn">05</span>Kids of Excellence — 3301 Higgins Blvd, New Orleans, LA 70126</li>
+        <li><span class="locn">06</span>Trinity Community Center — 3908 Joliet St, New Orleans, LA 70118</li>
+        <li><span class="locn">07</span>Our Lady of Prompt Succor — 2320 Paris Rd, Chalmette, LA 70043</li>
+        <li><span class="locn">08</span>St. Mark's Episcopal Church — 3245 Manhattan Blvd, Harvey, LA 70058</li>
+        <li><span class="locn">09</span><span style="color:var(--red)">OUT OF COMMISSION</span> — 6th District Police Station, 1930 MLK Jr Blvd, New Orleans</li>
+        <li><span class="locn">10</span>St. Martin's Episcopal Church — 2216 Metairie Rd, Metairie, LA 70001</li>
+        <li><span class="locn">11</span>Marine & Mt. Moriah Community Church — 3034 Andover St, Jefferson, LA 70121</li>
+        <li><span class="locn">12</span>Greater Good Hope Baptist Church — 47 Cathy St, Norco, LA 70079</li>
+      </ul>
+    </div>
+    <div class="pcard" style="border-left:3px solid #3A78C8">
+      <div class="ptitle">🤝 HandUp Program</div>
+      <div class="pbody">Gladewaves "Hand Up" program provides start-up housewares to individuals and families leaving a transitional housing program and moving into permanent housing. We work with <strong>Unity for the Homeless</strong>, <strong>Hotel Hope</strong>, and the <strong>Innocence Project</strong> to identify people in need.<br><br>Each box is valued at <strong>$500</strong> and contains items necessary to furnish a kitchen, bathroom, and bedroom(s) along with a <strong>$100 grocery gift card</strong>.</div>
+    </div>
+    <div class="pcard" style="border-left:3px solid #A864DC">
+      <div class="ptitle">👴 Senior Outreach Program</div>
+      <div class="pbody">Monthly free luncheon and lecture series for senior citizens in Metro New Orleans, <strong>September through June</strong>. Open to anyone 55+ for a hot meal and guest speakers. Now serving <strong>six locations</strong>.</div>
+      <ul class="loclst" style="margin-top:8px">
+        <li><span class="locn">01</span>Saint Philip's Episcopal Church — 3643 Aurora Dr, New Orleans, LA 70131</li>
+        <li><span class="locn">02</span>Congregation Gates of Prayer — 4000 W Esplanade Ave, Metairie, LA 70002</li>
+        <li><span class="locn">03</span>Greater Good Hope Baptist Church — 47 Cathy St, Norco, LA 70079</li>
+        <li><span class="locn">04</span>New Home Ministries — 1616 Robert C Blakes Sr Dr, New Orleans, LA 70130</li>
+        <li><span class="locn">05</span>Kinship Senior Center — 921 S Carrollton Ave, New Orleans, LA 70118</li>
+        <li><span class="locn">06</span>New Home Family Worship Center — 13800 Hayne Blvd, New Orleans, LA 70128</li>
+      </ul>
+    </div>
+    <div class="pcard" style="border-left:3px solid #C8A830">
+      <div class="ptitle">🦃 Thanksgiving Day Lunch</div>
+      <div class="pbody">Annual community Thanksgiving Day lunch serving Metro New Orleans families. A cornerstone event bringing the whole community together.</div>
+    </div>
+  </div>
+  <div class="tc" id="ta-board">
+    <h2 class="stl">Board of Directors</h2><p class="ssub">Hands-on leadership — every member is involved in every aspect of our programming</p>
+    <div class="bgrid">
+      <div class="bcard"><div class="bname">Janie Glade</div><div class="brole">Executive Director / Founder</div><div class="bbio">Loyola University New Orleans graduate. Owned and operated a Social Event planning company for 22 years. Served on boards of local nonprofits before founding Gladewaves in January 2018. The mastermind behind Gladewaves.</div></div>
+      <div class="bcard"><div class="bname">Louis Glade, MD</div><div class="brole">President, Board of Directors</div><div class="bbio">Graduate of LSU and LSU Medical School. Brings managerial skills and a lifelong history of participation on New Orleans nonprofit boards. Passion for helping people extends well beyond his work as a physician.</div></div>
+      <div class="bcard"><div class="bname">Susan Peppard, Esq.</div><div class="brole">Board Member</div><div class="bbio">Honors B.A. in History from UNO; J.D. from Tulane University. Former Director of Central Staff, Louisiana Fourth Circuit Court of Appeal. Brings passion for New Orleans and helping others.</div></div>
+      <div class="bcard"><div class="bname">Judy Kang, MD</div><div class="brole">Board Member</div><div class="bbio">First-generation Korean immigrant; naturalized citizen at 19. Raised in Greater N.O. area. Practicing physician on the Westbank since 2003. Parents raised 4 children on low income — she wants to help others succeed.</div></div>
+      <div class="bcard"><div class="bname">Matt Berger, JD, MBA</div><div class="brole">Board Member</div><div class="bbio">Regional President of Gulf States (LA/MS) for Humana. Former Division CFO, Medicare Central Division. Extensive background in M&A, finance, and healthcare operations.</div></div>
+      <div class="bcard"><div class="bname">Marylyn Rigby</div><div class="brole">Board Member</div><div class="bbio">Former Senior Director of Marketing & Investor Relations, SteadyMed Therapeutics. Graduate of University of New Orleans and Academy of The Sacred Heart.</div></div>
+      <div class="bcard"><div class="bname">Catherine Hudson, MD</div><div class="brole">Board Member</div><div class="bbio">Podiatric medicine private practice. Volunteer mentor, Big Brothers/Big Sisters. Former board member, Emerging Philanthropists of New Orleans (EPNO).</div></div>
+      <div class="bcard"><div class="bname">Jeff Fernandez</div><div class="brole">Board Member</div><div class="bbio">CEO, Ochsner Health Plan. Former SVP, Medicare Advantage at Humana (1.3M lives, western U.S.). 20+ years in health plan operations. BS from LSU, MBA from UNO, JD from Loyola.</div></div>
+      <div class="bcard"><div class="bname">Michael Carbo, Esq.</div><div class="brole">Board Member</div><div class="bbio">B.S.E. Electrical Engineering and J.D. cum laude, both Tulane. Member Louisiana Bar since 1982. President, Tulane Biomedical Engineering Advisory Board. Past president, T.R.E.E.</div></div>
+      <div class="bcard"><div class="bname">David Linnemeyer</div><div class="brole">Board Member</div><div class="bbio">Retired Manager, Blood Bank & Transfusion Service; Inspector, American Association of Blood Banks. Coordinates Gladewaves' Intern Program and annual coat drive.</div></div>
+      <div class="bcard"><div class="bname">Renée Davenport</div><div class="brole">Board Member</div><div class="bbio">34 years at Catholic Charities Archdiocese of New Orleans; Director, Food for Seniors program. MBA, Univ. of Phoenix. Native New Orleanian. "If I can help somebody as I travel along, my living shall not be in vain."</div></div>
+    </div>
+  </div>
+  <div class="tc" id="ta-contact">
+    <h2 class="stl">Contact Gladewaves</h2>
+    <p class="ssub">Want a Big Red Box at your church or community center? Interested in sponsoring a Senior Outreach Luncheon? We'd love to hear from you.</p>
+    <div class="pcard" style="max-width:480px">
+      <div class="crow"><div class="cicon">📞</div><div><div class="clbl">Phone</div><div class="cval">504-875-1718</div></div></div>
+      <div class="crow"><div class="cicon">✉️</div><div><div class="clbl">General Email</div><div class="cval">info@gladewaves.org</div></div></div>
+      <div class="crow"><div class="cicon">👩‍💼</div><div><div class="clbl">Executive Director</div><div class="cval">janie@gladewaves.org</div></div></div>
+      <div class="crow"><div class="cicon">📍</div><div><div class="clbl">Mailing Address</div><div class="cval">4505 S. Claiborne Ave, New Orleans, LA 70125</div></div></div>
+      <div class="crow"><div class="cicon">🌐</div><div><div class="clbl">Website</div><div class="cval">www.gladewaves.org</div></div></div>
+      <div class="crow"><div class="cicon">📱</div><div><div class="clbl">Social Media</div><div class="cval">@gladewaves on Facebook & Instagram</div></div></div>
+    </div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:13px;color:var(--cream);font-style:italic;margin:14px 0 9px;transition:color .3s">Ways to Support Gladewaves</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:8px;max-width:580px">
+      <div class="sc" style="text-align:left;padding:12px"><div style="font-size:18px;margin-bottom:5px">💳</div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);margin-bottom:2px">PAYPAL</div><div style="font-size:10px;color:var(--muted)">paypal.com/fundraiser/charity/3635991</div></div>
+      <div class="sc" style="text-align:left;padding:12px"><div style="font-size:18px;margin-bottom:5px">💚</div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);margin-bottom:2px">CASHAPP</div><div style="font-size:10px;color:var(--muted)">$GladewavesIn</div></div>
+      <div class="sc" style="text-align:left;padding:12px"><div style="font-size:18px;margin-bottom:5px">📦</div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);margin-bottom:2px">AMAZON WISHLIST</div><div style="font-size:10px;color:var(--muted)">Food & household items wishlist</div></div>
+      <div class="sc" style="text-align:left;padding:12px"><div style="font-size:18px;margin-bottom:5px">📬</div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);margin-bottom:2px">BY MAIL</div><div style="font-size:10px;color:var(--muted)">4505 S. Claiborne Ave, New Orleans, LA 70125</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- P01: EXECUTIVE ASSISTANT -->
+<div class="pg" id="p01">
+  <div class="tbar"><button class="tt on" onclick="tab(this,'tc01a')">💬 Assistant</button></div>
+  <div class="tc on" id="tc01a" style="display:flex;flex-direction:column;height:calc(100vh - 98px)">
+    <div class="qag" style="flex-shrink:0">
+      <button class="qab" onclick="cs('p01','Draft a donor outreach email asking for monthly support for Gladewaves and our Big Red Box program in Metro New Orleans')"><span class="qaicon">✉️</span><div class="qatitle">Donor Email</div><div class="qadesc">Monthly giving ask</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p01','Plan a Gladewaves community food drive event in New Orleans with full checklist and 8-week timeline. Our address is 4505 S. Claiborne Ave.')"><span class="qaicon">🎪</span><div class="qatitle">Plan Event</div><div class="qadesc">Food drive planning</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p01','Write a warm thank-you letter to a donor who just gave to Gladewaves in New Orleans. Our Big Red Box program serves 12 locations.')"><span class="qaicon">🙏</span><div class="qatitle">Thank You Letter</div><div class="qadesc">Donor appreciation</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p01','Create a Gladewaves board meeting agenda covering: financials, Big Red Box update, Senior Outreach, HandUp program, donor relations, Thanksgiving Lunch, new business')"><span class="qaicon">📋</span><div class="qatitle">Board Agenda</div><div class="qadesc">Full meeting prep</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p01','Draft an email to a New Orleans church asking them to host a Gladewaves Big Red Box — explain the program, what we need (space), and community impact')"><span class="qaicon">⛪</span><div class="qatitle">Church Outreach</div><div class="qadesc">Big Red Box placement</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p01','Write a volunteer recruitment message for Gladewaves for New Orleans Facebook community groups. Need Big Red Box Captains and Senior Outreach helpers.')"><span class="qaicon">📣</span><div class="qatitle">Recruit Volunteers</div><div class="qadesc">N.O. community post</div><div class="qago">Generate →</div></button>
+    </div>
+    <div class="cho">
+      <div class="chm" id="ms-p01">
+        <div class="mrow"><div class="av ai">🧭</div><div class="bbl ai">Welcome to the <strong>Gladewaves Executive Assistant</strong> 🌊<br><br>I know Gladewaves inside out — our Big Red Box program across 12 Metro New Orleans locations, HandUp transitional housing initiative, Senior Outreach luncheons (6 sites, Sept–June), Thanksgiving Day Lunch, and our mission to bring boots-on-the-ground aid to our community.<br><br>Use the quick actions above or tell me what you need.</div></div>
+      </div>
+      <div class="chia">
+        <div class="chrow"><textarea rows="2" placeholder="Draft an email, plan an event, write a letter..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p01')}"></textarea><button class="sendbtn" onclick="cs('p01')">➤</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P02: RED BOX MONITOR -->
+<div class="pg" id="p02">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc02a')">🗺️ Dashboard</button>
+    <button class="tt" onclick="tab(this,'tc02b')">📋 Report</button>
+    <button class="tt" onclick="tab(this,'tc02c')">💬 AI Help</button>
+    <button class="tt" onclick="tab(this,'tc02d')">⚙️ Manage</button>
+  </div>
+  <div class="tc on" id="tc02a">
+    <div class="sg" id="rb-stats"></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+      <span style="font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);text-transform:uppercase;letter-spacing:.09em">Filter:</span>
+      <button class="btng" style="font-size:8px;padding:3px 10px" onclick="rbFilter('all')">All</button>
+      <button class="btng" style="font-size:8px;padding:3px 10px" onclick="rbFilter('critical')">🚨 Critical</button>
+      <button class="btng" style="font-size:8px;padding:3px 10px" onclick="rbFilter('low')">⚠️ Low</button>
+      <button class="btng" style="font-size:8px;padding:3px 10px" onclick="rbFilter('good')">✅ Good/Full</button>
+    </div>
+    <div class="boxgrid" id="rb-grid"></div>
+  </div>
+  <div class="tc" id="tc02b">
+    <h2 class="stl">Community Box Report</h2>
+    <p class="ssub">Tap any box to submit a community status report. Also accessible via QR code inside each Big Red Box.</p>
+    <div class="boxgrid" id="rb-report-grid"></div>
+  </div>
+  <div class="tc" id="tc02c" style="display:flex;flex-direction:column;height:calc(100vh - 96px)">
+    <div class="cho">
+      <div class="chm" id="ms-p02">
+        <div class="mrow"><div class="av ai" style="background:linear-gradient(135deg,#CC2222,#881010)">📦</div><div class="bbl ai" id="rb-greeting">Monitoring all Big Red Box locations across Metro New Orleans. How can I help?</div></div>
+      </div>
+      <div class="chia">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p02','Which Big Red Boxes need restocking most urgently right now?')">Urgent needs</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p02','Draft a volunteer dispatch message for critical boxes in New Orleans')">Dispatch volunteers</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p02','Write a social media post asking for Big Red Box food donations')">Donation post</button>
+        </div>
+        <div class="chrow"><textarea rows="2" placeholder="Ask about box status, restocking, volunteers..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p02')}"></textarea><button class="sendbtn" style="background:linear-gradient(135deg,#CC2222,#881010)" onclick="cs('p02')">➤</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="tc02d">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <h2 class="stl">Manage Big Red Boxes</h2>
+      <button class="btnp" style="background:linear-gradient(135deg,#CC2222,#881010)" onclick="document.getElementById('m-addbox').classList.add('open')">+ Add Location</button>
+    </div>
+    <div id="rb-manage-list" style="display:flex;flex-direction:column;gap:7px"></div>
+  </div>
+</div>
+
+<!-- P03: SOCIAL MEDIA -->
+<div class="pg" id="p03">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc03a')">✨ Generate</button>
+    <button class="tt" onclick="tab(this,'tc03b')">💬 AI Director</button>
+    <button class="tt" onclick="tab(this,'tc03c')">📚 Saved</button>
+  </div>
+  <div class="tc on" id="tc03a">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <h2 class="stl">Generate Content</h2>
+        <label class="fl">Platform</label>
+        <div class="platg" id="platg"></div>
+        <label class="fl">What do you want to post about?</label>
+        <textarea class="fta" id="soc-topic" rows="3" placeholder="e.g. 'New Big Red Box at St. Rita's' or 'Senior luncheon Thursday at Kinship Center'"></textarea>
+        <label class="fl">Extra context (optional)</label>
+        <textarea class="fta" id="soc-ctx" rows="2" placeholder="Specific names, dates, numbers, locations..."></textarea>
+        <button class="btnp" id="soc-gen-btn" onclick="socGen()" style="background:linear-gradient(135deg,#3A9E68,#1A5030);width:100%">✨ Generate Post</button>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+          <h3 style="font-family:'Playfair Display',serif;font-size:13px;color:var(--cream);font-style:italic;transition:color .3s">Output</h3>
+          <div style="display:flex;gap:5px" id="soc-acts"></div>
+        </div>
+        <div class="outbox" id="soc-out" style="min-height:280px"><div style="text-align:center;padding:36px 16px;color:var(--dim)"><div style="font-size:26px;margin-bottom:7px">✨</div><div style="font-family:'Playfair Display',serif;font-style:italic;font-size:13px">Output appears here</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="tc03b" style="display:flex;flex-direction:column;height:calc(100vh - 96px)">
+    <div class="cho">
+      <div class="chm" id="ms-p03">
+        <div class="mrow"><div class="av ai" style="background:linear-gradient(135deg,#3A9E68,#1A5030)">🌊</div><div class="bbl ai">I'm your <strong>Gladewaves Social Media Director</strong>. I write for Facebook, Instagram, Twitter/X, NextDoor, press releases, and newsletters — all in Gladewaves' warm, mission-driven New Orleans voice. What do you need?</div></div>
+      </div>
+      <div class="chia">
+        <div class="chrow"><textarea rows="2" placeholder="Ask for any social content..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p03')}"></textarea><button class="sendbtn" style="background:linear-gradient(135deg,#3A9E68,#1A5030)" onclick="cs('p03')">➤</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="tc03c">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h2 class="stl">Saved Posts</h2><span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted)" id="soc-lib-ct"></span>
+    </div>
+    <div id="soc-lib"></div>
+  </div>
+</div>
+
+<!-- P04: DONOR & FUNDRAISING -->
+<div class="pg" id="p04">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc04a')">💬 AI Assistant</button>
+    <button class="tt" onclick="tab(this,'tc04b')">👥 Donor CRM</button>
+    <button class="tt" onclick="tab(this,'tc04c')">🎯 Campaigns</button>
+  </div>
+  <div class="tc on" id="tc04a" style="display:flex;flex-direction:column;height:calc(100vh - 98px)">
+    <div class="qag" style="flex-shrink:0">
+      <button class="qab" onclick="cs('p04','Write a heartfelt first-time donor thank-you letter for a gift to Gladewaves. Mention Big Red Box program impact.')"><span class="qaicon">🙏</span><div class="qatitle">First-Time Thank You</div><div class="qadesc">Build lasting relationships</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p04','Write a re-engagement email to a lapsed Gladewaves donor. Warm, not guilt-inducing. Share what has happened — new Big Red Box locations, senior luncheons.')"><span class="qaicon">💌</span><div class="qatitle">Lapsed Donor Re-Engagement</div><div class="qadesc">Gently reconnect</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p04','Plan a Gladewaves monthly giving program. Launch email: $25/mo feeds a family, $50/mo restocks a Red Box, $100/mo sponsors a Senior Luncheon.')"><span class="qaicon">🔄</span><div class="qatitle">Monthly Giving Program</div><div class="qadesc">Sustainable recurring revenue</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p04','Write a major donor cultivation letter for someone considering a significant gift to Gladewaves. Include outcomes and an invitation to see operations.')"><span class="qaicon">⭐</span><div class="qatitle">Major Gift Cultivation</div><div class="qadesc">High-capacity donor nurturing</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p04','Plan a Gladewaves year-end fundraising campaign for November-December around the Thanksgiving Day Lunch and holiday season.')"><span class="qaicon">🦃</span><div class="qatitle">Year-End / Thanksgiving Campaign</div><div class="qadesc">Holiday giving campaign</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p04','Write a corporate sponsorship proposal for Gladewaves targeting N.O. businesses. Tiers: Big Red Box Sponsor $500, Senior Luncheon Sponsor $1,000, Program Sponsor $5,000.')"><span class="qaicon">🏢</span><div class="qatitle">Corporate Sponsorship</div><div class="qadesc">N.O. business packages</div><div class="qago">Generate →</div></button>
+    </div>
+    <div class="cho">
+      <div class="chm" id="ms-p04">
+        <div class="mrow"><div class="av ai" style="background:linear-gradient(135deg,#A864DC,#6020A0)">💛</div><div class="bbl ai">I'm your <strong>Gladewaves Donor & Fundraising Director</strong>. I know our four programs and how to tell these stories to inspire giving. Donations go to PayPal, CashApp ($GladewavesIn), Amazon Wishlist, or 4505 S. Claiborne Ave. What do you need?</div></div>
+      </div>
+      <div class="chia">
+        <div class="chrow"><textarea rows="2" placeholder="Donor situation, appeal letter, campaign plan..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p04')}"></textarea><button class="sendbtn" style="background:linear-gradient(135deg,#A864DC,#6020A0)" onclick="cs('p04')">➤</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="tc04b">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 class="stl">Donor CRM</h2>
+      <button class="btnp" style="background:linear-gradient(135deg,#A864DC,#6020A0)" onclick="document.getElementById('m-adddonor').classList.add('open')">+ Add Donor</button>
+    </div>
+    <div class="cgrid" id="donor-grid"></div>
+  </div>
+  <div class="tc" id="tc04c">
+    <h2 class="stl">Campaign Planner</h2><p class="ssub">Describe your goal and get a full fundraising campaign plan.</p>
+    <div style="max-width:540px">
+      <div class="f2 fg"><div><label class="fl">Campaign Goal</label><input class="fi" id="camp-goal" placeholder="Raise $10,000 for Red Box expansion"/></div><div><label class="fl">Timeline</label><select class="fs" id="camp-time"><option>30 days</option><option>60 days</option><option>90 days</option><option>End-of-year / Thanksgiving</option></select></div></div>
+      <div class="fg"><label class="fl">Primary Audience</label><select class="fs" id="camp-aud"><option>Individual donors</option><option>New Orleans businesses</option><option>Churches & faith communities</option><option>Both individual & corporate</option></select></div>
+      <div class="fg"><label class="fl">Additional context</label><textarea class="fta" id="camp-ctx" rows="2" placeholder="Programs to highlight, past performance, specific need..."></textarea></div>
+      <button class="btnp" id="camp-btn" onclick="planCampaign()" style="background:linear-gradient(135deg,#A864DC,#6020A0);width:100%;margin-bottom:11px">🎯 Generate Campaign Plan</button>
+      <div class="outbox" id="camp-out" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- P05: VOLUNTEERS -->
+<div class="pg" id="p05">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc05a')">💬 AI Coordinator</button>
+    <button class="tt" onclick="tab(this,'tc05b')">👥 Roster</button>
+    <button class="tt" onclick="tab(this,'tc05c')">📅 Schedule</button>
+  </div>
+  <div class="tc on" id="tc05a" style="display:flex;flex-direction:column;height:calc(100vh - 98px)">
+    <div class="qag" style="flex-shrink:0">
+      <button class="qab" onclick="cs('p05','Write a warm welcome email for a new Gladewaves volunteer in New Orleans. Explain our mission, Big Red Box program, Senior Outreach luncheons, and what to expect.')"><span class="qaicon">👋</span><div class="qatitle">Welcome New Volunteer</div><div class="qadesc">Warm onboarding email</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p05','Write a volunteer shift reminder for a Gladewaves Big Red Box restock day in New Orleans. Include what to bring and how to find the location.')"><span class="qaicon">📅</span><div class="qatitle">Shift Reminder</div><div class="qadesc">Restock day prep</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p05','Write a volunteer recruitment post for Gladewaves for New Orleans Facebook groups. Need Big Red Box Captains and Senior Outreach luncheon helpers (Sept–June).')"><span class="qaicon">📣</span><div class="qatitle">Recruitment Post</div><div class="qadesc">N.O. community groups</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p05','Write heartfelt volunteer appreciation for our Gladewaves team. Celebrate Box Captains keeping 12 locations stocked and Senior Outreach hosts at 6 luncheon sites.')"><span class="qaicon">🌟</span><div class="qatitle">Volunteer Appreciation</div><div class="qadesc">Celebrate the team</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p05','Write a re-engagement message to a Gladewaves volunteer who has gone quiet. Warm, flexible. Mention we especially need Big Red Box Captains right now.')"><span class="qaicon">💌</span><div class="qatitle">Re-Engage Volunteer</div><div class="qadesc">Bring back quiet volunteers</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p05','Create a volunteer orientation guide for Gladewaves. Include: mission, Big Red Box, Senior Outreach, HandUp, safety guidelines, contact 504-875-1718.')"><span class="qaicon">📋</span><div class="qatitle">Orientation Guide</div><div class="qadesc">Full volunteer handbook</div><div class="qago">Generate →</div></button>
+    </div>
+    <div class="cho">
+      <div class="chm" id="ms-p05">
+        <div class="mrow"><div class="av ai" style="background:linear-gradient(135deg,#3A78C8,#1A4080)">🙌</div><div class="bbl ai">I'm the <strong>Gladewaves Volunteer Coordinator</strong>. I help you recruit, welcome, schedule, and retain the volunteers who keep our Big Red Boxes stocked and our Senior Outreach luncheons running across Metro New Orleans.</div></div>
+      </div>
+      <div class="chia">
+        <div class="chrow"><textarea rows="2" placeholder="Recruiting, scheduling, onboarding, appreciation..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p05')}"></textarea><button class="sendbtn" style="background:linear-gradient(135deg,#3A78C8,#1A4080)" onclick="cs('p05')">➤</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="tc05b">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <h2 class="stl">Volunteer Roster</h2>
+      <button class="btnp" style="background:linear-gradient(135deg,#3A78C8,#1A4080)" onclick="document.getElementById('m-addvol').classList.add('open')">+ Add Volunteer</button>
+    </div>
+    <div class="cgrid" id="vol-grid"></div>
+  </div>
+  <div class="tc" id="tc05c">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <h2 class="stl">Upcoming Shifts</h2>
+      <button class="btnp" style="background:linear-gradient(135deg,#3A78C8,#1A4080)" onclick="document.getElementById('m-addshift').classList.add('open')">+ Add Shift</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px" id="shift-grid"></div>
+  </div>
+</div>
+
+<!-- P06: GRANT WRITING -->
+<div class="pg" id="p06">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc06a')">💬 AI Writer</button>
+    <button class="tt" onclick="tab(this,'tc06b')">🏗️ Builder</button>
+    <button class="tt" onclick="tab(this,'tc06c')">📊 Tracker</button>
+  </div>
+  <div class="tc on" id="tc06a" style="display:flex;flex-direction:column;height:calc(100vh - 98px)">
+    <div class="qag" style="flex-shrink:0">
+      <button class="qab" onclick="cs('p06','Write a compelling need statement for a Gladewaves grant. 87,170 people are food insecure in Orleans Parish. 52% of N.O. households cannot afford basic expenses. 39% of N.O. children live in poverty.')"><span class="qaicon">📊</span><div class="qatitle">Need Statement</div><div class="qadesc">N.O. food insecurity data</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p06','Write a program description for a Gladewaves grant: Big Red Box (12 locations, barrier-free pantry), HandUp ($500 boxes + $100 gift cards), Senior Outreach (6 sites, Sept-June), Thanksgiving Lunch.')"><span class="qaicon">📋</span><div class="qatitle">Program Description</div><div class="qadesc">All four Gladewaves programs</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p06','Write a budget narrative for a $25,000 grant for Gladewaves Big Red Box expansion: new box construction, food purchasing, transport, volunteer coordination.')"><span class="qaicon">💰</span><div class="qatitle">Budget Narrative</div><div class="qadesc">Red Box expansion costs</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p06','Write an executive summary for a Gladewaves grant application. Founded 2018, 4505 S. Claiborne Ave, New Orleans LA 70125, 504-875-1718, info@gladewaves.org. 12 Big Red Box locations, 4 programs.')"><span class="qaicon">⚡</span><div class="qatitle">Executive Summary</div><div class="qadesc">Full org overview</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p06','Write an organizational capacity section for Gladewaves: founded 2018, ED Janie Glade (Loyola, 22yrs event planning), board includes physicians MDs, attorneys JDs, healthcare executives, community leaders.')"><span class="qaicon">🏛️</span><div class="qatitle">Org Capacity</div><div class="qadesc">Board & leadership strength</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p06','Write a grant progress report for Gladewaves: Big Red Box at 11 active locations, Senior Outreach at 6 sites monthly, HandUp partnering with Unity for the Homeless, Hotel Hope, and the Innocence Project.')"><span class="qaicon">📈</span><div class="qatitle">Grant Progress Report</div><div class="qadesc">Program outcome reporting</div><div class="qago">Generate →</div></button>
+    </div>
+    <div class="cho">
+      <div class="chm" id="ms-p06">
+        <div class="mrow"><div class="av ai" style="background:linear-gradient(135deg,#C8A830,#806810)">📝</div><div class="bbl ai">I'm the <strong>Gladewaves Grant Writing Director</strong>. I know all four programs, the New Orleans community need data, and our board's credentials. Tell me about a grant opportunity and I'll build the strongest possible application.</div></div>
+      </div>
+      <div class="chia">
+        <div class="chrow"><textarea rows="2" placeholder="Describe a grant, ask for a section, or request a full proposal..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p06')}"></textarea><button class="sendbtn" style="background:linear-gradient(135deg,#C8A830,#806810);color:#080C08" onclick="cs('p06')">➤</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="tc06b">
+    <h2 class="stl">Proposal Builder</h2><p class="ssub">Fill in grant details, get a complete proposal section.</p>
+    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:16px">
+      <div>
+        <div class="f2 fg"><div><label class="fl">Funder</label><input class="fi" id="gb-funder" placeholder="Foundation name"/></div><div><label class="fl">Amount</label><input class="fi" id="gb-amount" placeholder="$15,000"/></div></div>
+        <div class="f2 fg"><div><label class="fl">Program Focus</label><select class="fs" id="gb-prog"><option>Big Red Box expansion</option><option>General operations</option><option>Senior Outreach</option><option>HandUp program</option><option>Food purchasing</option><option>Thanksgiving Day Lunch</option></select></div><div><label class="fl">Section</label><select class="fs" id="gb-sec"><option>Full Proposal</option><option>Executive Summary</option><option>Need Statement</option><option>Program Description</option><option>Budget Narrative</option><option>Org Capacity</option><option>Evaluation Plan</option></select></div></div>
+        <div class="fg"><label class="fl">Funder requirements / context</label><textarea class="fta" id="gb-ctx" rows="3" placeholder="Funder priorities, geographic focus, required language..."></textarea></div>
+        <div style="display:flex;gap:6px">
+          <button class="btnp" id="gb-btn" onclick="buildProposal()" style="background:linear-gradient(135deg,#C8A830,#806810);color:#080C08;flex:1">📝 Generate</button>
+          <button class="btng" onclick="navigator.clipboard?.writeText(document.getElementById('gb-out').textContent);toast('Copied!')">Copy</button>
+        </div>
+      </div>
+      <div class="outbox" id="gb-out" style="min-height:300px">Generated section appears here…</div>
+    </div>
+  </div>
+  <div class="tc" id="tc06c">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <h2 class="stl">Grant Tracker</h2>
+      <button class="btnp" style="background:linear-gradient(135deg,#C8A830,#806810);color:#080C08" onclick="document.getElementById('m-addgrant').classList.add('open')">+ Add Grant</button>
+    </div>
+    <div class="cgrid" id="grant-grid"></div>
+  </div>
+</div>
+
+<!-- P07: IMPACT DASHBOARD -->
+<div class="pg" id="p07">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc07a')">📊 Dashboard</button>
+    <button class="tt" onclick="tab(this,'tc07b')">📝 Log Entry</button>
+    <button class="tt" onclick="tab(this,'tc07c')">🤖 AI Reports</button>
+  </div>
+  <div class="tc on" id="tc07a">
+    <div class="sg" id="imp-stats"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="card" style="padding:13px"><div style="font-family:'Playfair Display',serif;font-size:12px;color:var(--cream);font-style:italic;margin-bottom:8px;transition:color .3s">Families Served — Monthly</div><div class="bch" id="fam-chart"></div></div>
+      <div class="card" style="padding:13px"><div style="font-family:'Playfair Display',serif;font-size:12px;color:var(--cream);font-style:italic;margin-bottom:8px;transition:color .3s">Food Distributed (lbs)</div><div class="bch" id="food-chart"></div></div>
+    </div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:13px;color:var(--cream);font-style:italic;margin-bottom:8px;transition:color .3s">Monthly Log</h3>
+    <div class="cgrid" id="imp-entries"></div>
+  </div>
+  <div class="tc" id="tc07b">
+    <h2 class="stl">Log Monthly Data</h2><p class="ssub">Record this month's Gladewaves impact numbers.</p>
+    <div style="max-width:520px">
+      <div class="f2 fg"><div><label class="fl">Month</label><input class="fi" id="il-month" type="month"/></div><div><label class="fl">Families Served</label><input class="fi" id="il-fam" type="number" placeholder="0"/></div></div>
+      <div class="f2 fg"><div><label class="fl">Food (lbs)</label><input class="fi" id="il-food" type="number" placeholder="0"/></div><div><label class="fl">Big Red Box Restocks</label><input class="fi" id="il-boxes" type="number" placeholder="0"/></div></div>
+      <div class="f2 fg"><div><label class="fl">Volunteer Hours</label><input class="fi" id="il-hours" type="number" placeholder="0"/></div><div><label class="fl">Seniors Served at Luncheons</label><input class="fi" id="il-seniors" type="number" placeholder="0"/></div></div>
+      <div class="f2 fg"><div><label class="fl">Funds Raised ($)</label><input class="fi" id="il-funds" type="number" placeholder="0"/></div><div><label class="fl">New Donors</label><input class="fi" id="il-donors" type="number" placeholder="0"/></div></div>
+      <div class="fg"><label class="fl">Notes / Highlights</label><textarea class="fta" id="il-notes" rows="2" placeholder="New box locations, partnerships, special events..."></textarea></div>
+      <button class="btnp" style="background:linear-gradient(135deg,#DC5050,#901818);width:100%" onclick="logEntry()">📊 Save Entry</button>
+    </div>
+  </div>
+  <div class="tc" id="tc07c">
+    <h2 class="stl">AI Report Generator</h2><p class="ssub">Turn impact numbers into board reports, donor letters, and grant updates.</p>
+    <div style="max-width:620px">
+      <div class="f2 fg"><div><label class="fl">Report Type</label><select class="fs" id="rpt-type"><option>Board Report</option><option>Donor Impact Letter</option><option>Grant Progress Report</option><option>Annual Summary</option><option>Press Release</option></select></div><div><label class="fl">Period</label><select class="fs" id="rpt-period"><option>This Month</option><option>Last Quarter</option><option>Year to Date</option><option>Full Year</option></select></div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:9px">
+        <div><label class="fl">Families</label><input class="fi" id="rpt-fam" placeholder="200" style="margin:0"/></div>
+        <div><label class="fl">Food (lbs)</label><input class="fi" id="rpt-food" placeholder="1500" style="margin:0"/></div>
+        <div><label class="fl">Vol Hours</label><input class="fi" id="rpt-hours" placeholder="240" style="margin:0"/></div>
+        <div><label class="fl">Seniors</label><input class="fi" id="rpt-seniors" placeholder="180" style="margin:0"/></div>
+      </div>
+      <div class="fg"><label class="fl">Highlights</label><textarea class="fta" id="rpt-hi" rows="2" placeholder="New Red Box locations, HandUp boxes delivered, partnerships..."></textarea></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button class="btnp" id="rpt-btn" onclick="genReport()" style="background:linear-gradient(135deg,#DC5050,#901818);flex:1">🤖 Generate Report</button>
+        <button class="btng" onclick="navigator.clipboard?.writeText(document.getElementById('rpt-out').textContent);toast('Copied!')">Copy</button>
+      </div>
+      <div class="outbox" id="rpt-out" style="min-height:160px">Generated report appears here…</div>
+    </div>
+  </div>
+</div>
+
+<!-- P08: GRANT FINDER -->
+<div class="pg" id="p08">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc08a')">🔍 Find Grants</button>
+    <button class="tt" onclick="tab(this,'tc08b')">💬 Research Chat</button>
+    <button class="tt" onclick="tab(this,'tc08c')">⭐ Saved</button>
+  </div>
+  <div class="tc on" id="tc08a">
+    <div class="card" style="padding:16px;margin-bottom:16px">
+      <h2 class="stl" style="margin-bottom:2px">Grant Opportunity Finder</h2>
+      <p class="ssub" style="margin-bottom:10px">AI searches for real grant opportunities matching Gladewaves' programs in Metro New Orleans.</p>
+      <label class="fl">Focus Area (select all that apply)</label>
+      <div class="gfcatg" id="gf-cats"></div>
+      <div class="f2" style="margin-bottom:9px">
+        <div><label class="fl">Grant Size</label><select class="fs" id="gf-size" style="margin:0"><option value="">Any Amount</option><option value="small">Under $10,000</option><option value="mid">$10,000–$50,000</option><option value="large">$50,000+</option></select></div>
+        <div><label class="fl">Funder Type</label><select class="fs" id="gf-type" style="margin:0"><option value="">Any Type</option><option value="foundation">Private Foundation</option><option value="corporate">Corporate</option><option value="government">Government / USDA</option><option value="faith">Faith-Based</option><option value="louisiana">Louisiana-Specific</option></select></div>
+      </div>
+      <div style="margin-bottom:10px"><label class="fl">Additional details</label><input class="fi" id="gf-extra" placeholder="e.g. Louisiana funders only, food pantry focus, senior services..." style="margin:0"/></div>
+      <button class="btnp" id="gf-btn" onclick="findGrants()" style="background:linear-gradient(135deg,#40C8C0,#107870);color:#080C08;width:100%;padding:10px">🔍 Find Grant Opportunities for Gladewaves</button>
+    </div>
+    <div id="gf-results"></div>
+  </div>
+  <div class="tc" id="tc08b" style="display:flex;flex-direction:column;height:calc(100vh - 96px)">
+    <div class="cho">
+      <div class="chm" id="ms-p08">
+        <div class="mrow"><div class="av ai" style="background:linear-gradient(135deg,#40C8C0,#107870)">🔍</div><div class="bbl ai">I'm your <strong>Gladewaves Grant Research Specialist</strong>.<br><br>I find funding for nonprofits like Gladewaves — food security, senior services, transitional housing, and community development in Louisiana.<br><br>Try: <em>"What foundations in Louisiana fund food pantry programs?"</em></div></div>
+      </div>
+      <div class="chia">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p08','What federal grants are available for nonprofit food pantry programs in Louisiana?')">Federal grants</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p08','Find corporate foundations that fund food security in New Orleans or Louisiana')">Corporate funders</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p08','What Louisiana community foundations fund senior services and food programs?')">Louisiana foundations</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p08','What USDA grant programs could fund the Gladewaves Big Red Box community food pantry network?')">USDA programs</button>
+        </div>
+        <div class="chrow"><textarea rows="2" placeholder="Ask about specific grants, funders, eligibility, deadlines..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p08')}"></textarea><button class="sendbtn" style="background:linear-gradient(135deg,#40C8C0,#107870);color:#080C08" onclick="cs('p08')">➤</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="tc08c">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h2 class="stl">Saved Opportunities</h2>
+      <span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted)" id="gf-saved-ct"></span>
+    </div>
+    <div id="gf-saved-list"></div>
+  </div>
+</div>
+
+<!-- P09: FOOD RESCUE CAMPAIGN -->
+<div class="pg" id="p09">
+  <div class="tbar">
+    <button class="tt on" onclick="tab(this,'tc09a')">💬 AI Campaign</button>
+    <button class="tt" onclick="tab(this,'tc09b')">🏛️ Council Outreach</button>
+    <button class="tt" onclick="tab(this,'tc09c')">🏨 Biz Outreach</button>
+    <button class="tt" onclick="tab(this,'tc09d')">📣 Public Campaign</button>
+  </div>
+
+  <!-- AI CHAT -->
+  <div class="tc on" id="tc09a" style="display:flex;flex-direction:column;height:calc(100vh - 98px)">
+    <div class="qag" style="flex-shrink:0">
+      <button class="qab" onclick="cs('p09','Draft a compelling one-page overview of the Gladewaves Food Rescue Initiative — what it is, why New Orleans needs it, how it works with hotels and restaurants, and what the proposed ordinance would do.')"><span class="qaicon">📄</span><div class="qatitle">Initiative Overview</div><div class="qadesc">One-pager for meetings</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p09','Write talking points for Janie Glade to use when meeting with New Orleans City Council members about the food rescue ordinance. Include precedent from other cities, liability removal framing, and the community need.')"><span class="qaicon">🎤</span><div class="qatitle">Council Talking Points</div><div class="qadesc">Janie\'s meeting prep</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p09','Draft a letter to a New Orleans hotel asking them to participate in the Gladewaves food rescue program. Focus on: ease of participation, liability protection under the Good Samaritan Food Donation Act, community goodwill, and press recognition.')"><span class="qaicon">🏨</span><div class="qatitle">Hotel Outreach Letter</div><div class="qadesc">Liability-focused, professional</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p09','Draft a letter to a New Orleans restaurant asking them to donate unused prepared food and stock to Gladewaves. Address liability concerns directly. Mention the federal Bill Emerson Good Samaritan Food Donation Act and the proposed city ordinance.')"><span class="qaicon">🍽️</span><div class="qatitle">Restaurant Letter</div><div class="qadesc">Address liability head-on</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p09','Write a press release announcing the Gladewaves Food Rescue Initiative in New Orleans. Include the problem (hotels and restaurants discarding usable food), the solution, the ordinance goal, a quote from Janie Glade, and community impact stats.')"><span class="qaicon">📰</span><div class="qatitle">Press Release</div><div class="qadesc">Announce the initiative</div><div class="qago">Generate →</div></button>
+      <button class="qab" onclick="cs('p09','Write a draft ordinance proposal for New Orleans City Council that would: (1) allow hotels and restaurants to donate unused prepared food and stock to nonprofits, (2) explicitly remove civil and criminal liability from donating businesses, (3) establish a simple pickup/documentation process. Reference precedent from New York, Denver, and San Francisco.')"><span class="qaicon">⚖️</span><div class="qatitle">Draft Ordinance Language</div><div class="qadesc">Legal framework for council</div><div class="qago">Generate →</div></button>
+    </div>
+    <div class="cho">
+      <div class="chm" id="ms-p09">
+        <div class="mrow"><div class="av ai" style="background:linear-gradient(135deg,#E07840,#883010)">🍽️</div><div class="bbl ai">I'm the <strong>Gladewaves Food Rescue Campaign Director</strong>.<br><br>I'm helping Janie and the team launch a city-wide initiative to rescue unused food from New Orleans hotels and restaurants — both prepared food and pantry stock — before it goes to the trash.<br><br>This requires a <strong>New Orleans City Council ordinance</strong> that explicitly removes liability from participating businesses. Other cities including New York, Denver, and San Francisco have done this successfully.<br><br>I can draft council letters, business outreach, press releases, social content, talking points, and ordinance language. What do you need?</div></div>
+      </div>
+      <div class="chia">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p09','What cities have passed food rescue ordinances and what did they include?')">City precedents</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p09','Explain the Bill Emerson Good Samaritan Food Donation Act and how it protects donors')">Federal law</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p09','Which of the 7 current New Orleans City Council members should Gladewaves approach first for the food rescue ordinance, and why? Council: JP Morrell and Matthew Willard (At-Large), Aimee McCarron (District A), Lesli Harris (District B), Freddie King III (District C), Eugene Green (District D), Jason Hughes (District E). Note: Helena Moreno is now Mayor and could be a powerful ally.')">Council strategy</button>
+          <button class="btng" style="font-size:8px;padding:2px 8px" onclick="cs('p09','What are the strongest arguments to convince a New Orleans hotel GM to participate in food rescue?')">Hotel strategy</button>
+        </div>
+        <div class="chrow"><textarea rows="2" placeholder="Council strategy, business outreach, ordinance language, press..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cs('p09')}"></textarea><button class="sendbtn" style="background:linear-gradient(135deg,#E07840,#883010)" onclick="cs('p09')">➤</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COUNCIL OUTREACH -->
+  <div class="tc" id="tc09b">
+    <h2 class="stl">City Council Outreach</h2>
+    <p class="ssub">Generate letters, talking points, and constituent pressure materials for the food rescue ordinance push.</p>
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px">
+      <div>
+        <div class="fg"><label class="fl">Council Member</label>
+          <select class="fs" id="co-name-sel" onchange="document.getElementById('co-name').value=this.value;document.getElementById('co-district').value=this.options[this.selectedIndex].dataset.dist">
+            <option value="" data-dist="">— Select or type below —</option>
+            <option value="Jean-Paul &quot;JP&quot; Morrell" data-dist="At-Large · JP.Morrell@nola.gov · (504) 658-1070">JP Morrell — At-Large</option>
+            <option value="Matthew Willard" data-dist="At-Large · Matthew.Willard@nola.gov · (504) 658-1060">Matthew Willard — At-Large</option>
+            <option value="Aimee McCarron" data-dist="District A · Aimee.McCarron@nola.gov · (504) 658-1010">Aimee McCarron — District A</option>
+            <option value="Lesli Harris" data-dist="District B · Lesli.Harris@nola.gov · (504) 658-1020">Lesli Harris — District B</option>
+            <option value="Freddie King III" data-dist="District C · Freddie.King@nola.gov · (504) 658-1030">Freddie King III — District C</option>
+            <option value="Eugene J. Green" data-dist="District D · eugene.green@nola.gov · (504) 658-1040">Eugene Green — District D</option>
+            <option value="Jason Hughes" data-dist="District E · Jason.Hughes@nola.gov · (504) 658-1050">Jason Hughes — District E</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Council Member Name (override)</label><input class="fi" id="co-name" placeholder="Type name if not listed above"/></div>
+        <div class="fg"><label class="fl">District / Contact</label><input class="fi" id="co-district" placeholder="Auto-fills from selection above"/></div>
+        <div class="fg"><label class="fl">Document Type</label>
+          <select class="fs" id="co-type">
+            <option>Formal ordinance support letter</option>
+            <option>Meeting request letter</option>
+            <option>Constituent petition template</option>
+            <option>Follow-up after meeting</option>
+            <option>Talking points for Janie</option>
+            <option>One-page ordinance summary</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Angle to emphasize</label>
+          <select class="fs" id="co-angle">
+            <option>Community hunger impact</option>
+            <option>Business liability protection</option>
+            <option>Tourism & hospitality industry support</option>
+            <option>Environmental / food waste reduction</option>
+            <option>Economic benefit to the city</option>
+            <option>Precedent from other cities</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btnp" id="co-btn" onclick="genCouncil()" style="background:linear-gradient(135deg,#E07840,#883010);flex:1">🏛️ Generate</button>
+          <button class="btng" onclick="navigator.clipboard?.writeText(document.getElementById('co-out').textContent);toast('Copied!')">Copy</button>
+        </div>
+      </div>
+      <div class="outbox" id="co-out" style="min-height:320px">Generated document appears here…</div>
+    </div>
+    <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:rgba(224,120,64,.06);border:1px solid rgba(224,120,64,.18);border-radius:10px;padding:13px">
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(224,120,64,.7);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">⚖️ Legal Precedent</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7"><strong style="color:var(--text)">Federal:</strong> Bill Emerson Good Samaritan Food Donation Act (42 U.S.C. § 1791) already protects food donors from civil and criminal liability when donating in good faith to nonprofits.<br><br><strong style="color:var(--text)">City precedents:</strong> New York City (Local Law 52, 2021), Denver (Good Food Ordinance), San Francisco (food recovery hierarchy), Los Angeles (food recovery ordinance).<br><br><strong style="color:var(--text)">The gap:</strong> Most N.O. businesses don't know federal protections exist. A city ordinance creates clarity and signals city support — removing perceived risk entirely.</div>
+      </div>
+      <div style="background:rgba(58,120,200,.06);border:1px solid rgba(58,120,200,.18);border-radius:10px;padding:13px">
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(58,120,200,.7);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">🏛️ Current Council (2026)</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.85">
+          <strong style="color:var(--text)">At-Large:</strong><br>
+          JP Morrell · JP.Morrell@nola.gov<br>
+          Matthew Willard · Matthew.Willard@nola.gov<br><br>
+          <strong style="color:var(--text)">Districts:</strong><br>
+          A · Aimee McCarron<br>
+          B · Lesli Harris<br>
+          C · Freddie King III<br>
+          D · Eugene J. Green<br>
+          E · Jason Hughes<br><br>
+          <strong style="color:#E07840">Mayor:</strong> Helena Moreno (former At-Large) — powerful ally for this initiative.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESS OUTREACH -->
+  <div class="tc" id="tc09c">
+    <h2 class="stl">Hotel & Restaurant Outreach</h2>
+    <p class="ssub">Professional letters that lead with liability protection and community goodwill.</p>
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px">
+      <div>
+        <div class="fg"><label class="fl">Business Name</label><input class="fi" id="biz-name" placeholder="The Roosevelt New Orleans"/></div>
+        <div class="fg"><label class="fl">Contact Person</label><input class="fi" id="biz-contact" placeholder="General Manager / Chef / Owner"/></div>
+        <div class="fg"><label class="fl">Business Type</label>
+          <select class="fs" id="biz-type">
+            <option>Hotel (full-service)</option>
+            <option>Hotel (boutique)</option>
+            <option>Restaurant (fine dining)</option>
+            <option>Restaurant (casual)</option>
+            <option>Restaurant group / multi-location</option>
+            <option>Hotel restaurant combined</option>
+            <option>Catering company</option>
+            <option>Event venue</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">What we're asking for</label>
+          <select class="fs" id="biz-ask">
+            <option>Both prepared food and pantry stock</option>
+            <option>Prepared / cooked food only</option>
+            <option>Pantry stock and dry goods only</option>
+            <option>Event surplus food</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Tone</label>
+          <select class="fs" id="biz-tone">
+            <option>Professional partnership proposal</option>
+            <option>Warm community appeal</option>
+            <option>Brief introductory note</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btnp" id="biz-btn" onclick="genBizLetter()" style="background:linear-gradient(135deg,#E07840,#883010);flex:1">🏨 Generate Letter</button>
+          <button class="btng" onclick="navigator.clipboard?.writeText(document.getElementById('biz-out').textContent);toast('Copied!')">Copy</button>
+        </div>
+      </div>
+      <div class="outbox" id="biz-out" style="min-height:320px">Generated letter appears here…</div>
+    </div>
+  </div>
+
+  <!-- PUBLIC CAMPAIGN -->
+  <div class="tc" id="tc09d">
+    <h2 class="stl">Public Awareness Campaign</h2>
+    <p class="ssub">Social posts, petitions, and community content to build council pressure and public support.</p>
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px">
+      <div>
+        <label class="fl">Content Type</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px">
+          <div class="plato on" id="fr-fb" onclick="frSetType('facebook',this)" style="border-color:#4A90D9;background:rgba(74,144,217,.1)"><div class="platoicon">📘</div><div class="platoname">Facebook</div></div>
+          <div class="plato" id="fr-ig" onclick="frSetType('instagram',this)"><div class="platoicon">📸</div><div class="platoname">Instagram</div></div>
+          <div class="plato" id="fr-nd" onclick="frSetType('nextdoor',this)"><div class="platoicon">🏘️</div><div class="platoname">NextDoor</div></div>
+          <div class="plato" id="fr-tw" onclick="frSetType('twitter',this)"><div class="platoicon">🐦</div><div class="platoname">Twitter/X</div></div>
+          <div class="plato" id="fr-pe" onclick="frSetType('petition',this)"><div class="platoicon">✍️</div><div class="platoname">Petition Text</div></div>
+          <div class="plato" id="fr-pr" onclick="frSetType('press',this)"><div class="platoicon">📰</div><div class="platoname">Press Release</div></div>
+        </div>
+        <label class="fl">Campaign Message Focus</label>
+        <select class="fs" id="fr-focus">
+          <option>Announce the Food Rescue Initiative</option>
+          <option>Ask public to pressure City Council</option>
+          <option>Highlight food waste problem in N.O.</option>
+          <option>Celebrate a hotel/restaurant joining</option>
+          <option>Fundraiser success — $18,000 raised May 21st</option>
+          <option>Recruit restaurant/hotel partners</option>
+        </select>
+        <label class="fl" style="margin-top:8px">Extra details</label>
+        <textarea class="fta" id="fr-extra" rows="2" placeholder="Specific event, partner name, numbers, angle..."></textarea>
+        <div style="display:flex;gap:6px">
+          <button class="btnp" id="fr-btn" onclick="genFRPost()" style="background:linear-gradient(135deg,#E07840,#883010);flex:1">📣 Generate</button>
+          <button class="btng" onclick="navigator.clipboard?.writeText(document.getElementById('fr-out').textContent);toast('Copied!')">Copy</button>
+        </div>
+      </div>
+      <div class="outbox" id="fr-out" style="min-height:320px">Generated content appears here…</div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /tb -->
+</div><!-- /main -->
+
+<!-- MODALS -->
+<div id="m-addbox" class="mover"><div class="mbox">
+  <div class="mtitle">Add Big Red Box Location</div>
+  <label class="fl">Location Name</label><input class="fi" id="nb-name" placeholder="St. Luke's Episcopal Church"/>
+  <label class="fl">Address</label><input class="fi" id="nb-addr" placeholder="1222 N. Dorgenois St, New Orleans, LA"/>
+  <label class="fl">Box Captain</label><input class="fi" id="nb-cap" placeholder="Contact name"/>
+  <label class="fl">Type</label><select class="fs" id="nb-type" style="margin-bottom:12px"><option>Church</option><option>Police Station</option><option>Community Center</option><option>School</option><option>Library</option><option>Other</option></select>
+  <div style="display:flex;gap:8px"><button class="btnp" style="background:linear-gradient(135deg,#CC2222,#881010);flex:1" onclick="rbAddBox()">Add Box</button><button class="btng" onclick="document.getElementById('m-addbox').classList.remove('open')">Cancel</button></div>
+</div></div>
+
+<div id="m-report" class="mover"><div class="mbox">
+  <div class="mtitle" id="m-report-title">Report Box Status</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px" id="m-report-grid"></div>
+  <textarea class="fta" id="m-report-note" rows="2" placeholder="Optional notes (items needed, damage...)" style="margin-bottom:9px"></textarea>
+  <div style="display:flex;gap:8px"><button class="btnp" style="background:linear-gradient(135deg,#CC2222,#881010);flex:1" onclick="rbSubmitReport()">Submit</button><button class="btng" onclick="document.getElementById('m-report').classList.remove('open')">Cancel</button></div>
+</div></div>
+
+<div id="m-adddonor" class="mover"><div class="mbox">
+  <div class="mtitle">Add Donor</div>
+  <label class="fl">Full Name</label><input class="fi" id="nd-name" placeholder="Jane Smith"/>
+  <label class="fl">Email</label><input class="fi" id="nd-email" type="email" placeholder="jane@email.com"/>
+  <label class="fl">Total Given ($)</label><input class="fi" id="nd-amt" type="number" placeholder="500"/>
+  <label class="fl">Status</label><select class="fs" id="nd-status" style="margin-bottom:11px"><option value="active">Active</option><option value="monthly">Monthly</option><option value="lapsed">Lapsed</option><option value="prospect">Prospect</option></select>
+  <div style="display:flex;gap:8px"><button class="btnp" style="background:linear-gradient(135deg,#A864DC,#6020A0);flex:1" onclick="donorAdd()">Add Donor</button><button class="btng" onclick="document.getElementById('m-adddonor').classList.remove('open')">Cancel</button></div>
+</div></div>
+
+<div id="m-addvol" class="mover"><div class="mbox">
+  <div class="mtitle">Add Volunteer</div>
+  <label class="fl">Name</label><input class="fi" id="nv-name" placeholder="Maria Garcia"/>
+  <label class="fl">Role</label><select class="fs" id="nv-role"><option>Big Red Box Captain</option><option>Senior Outreach Host</option><option>Distribution Helper</option><option>Driver</option><option>HandUp Packer</option><option>Event Volunteer</option></select>
+  <label class="fl">Skills / Notes</label><input class="fi" id="nv-skills" placeholder="Spanish, Driving, Cooking..." style="margin-bottom:11px"/>
+  <div style="display:flex;gap:8px"><button class="btnp" style="background:linear-gradient(135deg,#3A78C8,#1A4080);flex:1" onclick="volAdd()">Add</button><button class="btng" onclick="document.getElementById('m-addvol').classList.remove('open')">Cancel</button></div>
+</div></div>
+
+<div id="m-addshift" class="mover"><div class="mbox">
+  <div class="mtitle">Add Shift</div>
+  <label class="fl">Shift Name</label><input class="fi" id="ns-name" placeholder="Big Red Box Restock — Uptown Route"/>
+  <label class="fl">Date & Time</label><input class="fi" id="ns-date" type="datetime-local"/>
+  <label class="fl">Location</label><input class="fi" id="ns-loc" placeholder="St. Rita's Catholic Church"/>
+  <label class="fl">Volunteers Needed</label><input class="fi" id="ns-needed" type="number" placeholder="4" style="margin-bottom:11px"/>
+  <div style="display:flex;gap:8px"><button class="btnp" style="background:linear-gradient(135deg,#3A78C8,#1A4080);flex:1" onclick="shiftAdd()">Add</button><button class="btng" onclick="document.getElementById('m-addshift').classList.remove('open')">Cancel</button></div>
+</div></div>
+
+<div id="m-addgrant" class="mover"><div class="mbox">
+  <div class="mtitle">Add Grant</div>
+  <label class="fl">Funder</label><input class="fi" id="ng-funder" placeholder="XYZ Foundation"/>
+  <label class="fl">Amount</label><input class="fi" id="ng-amount" placeholder="$10,000"/>
+  <label class="fl">Deadline</label><input class="fi" id="ng-deadline" type="date"/>
+  <label class="fl">Status</label><select class="fs" id="ng-status" style="margin-bottom:11px"><option value="researching">Researching</option><option value="drafting">Drafting</option><option value="submitted">Submitted</option><option value="awarded">Awarded</option><option value="declined">Declined</option></select>
+  <div style="display:flex;gap:8px"><button class="btnp" style="background:linear-gradient(135deg,#C8A830,#806810);color:#080C08;flex:1" onclick="grantAdd()">Add</button><button class="btng" onclick="document.getElementById('m-addgrant').classList.remove('open')">Cancel</button></div>
+</div></div>
+
+<script>
+// === THEME ===
+let dark=true;
+function toggleTheme(){dark=!dark;document.documentElement.setAttribute('data-theme',dark?'':'light');document.getElementById('ttbtn').textContent=dark?'☀️ Light':'🌙 Dark';}
+
+// === NAVIGATION ===
+const HDR={
+  p00:{i:'🏠',t:'Home',s:'Gladewaves AI Operations Suite',bg:'linear-gradient(135deg,#C8973A,#7A5010)'},
+  pab:{i:'🌊',t:'About Gladewaves',s:'Mission · Programs · Board · Contact',bg:'linear-gradient(135deg,#CC2222,#881010)'},
+  p01:{i:'🧭',t:'Executive Assistant',s:'Tool 01 · Communications & Operations',bg:'linear-gradient(135deg,#C8973A,#7A5010)'},
+  p02:{i:'📦',t:'Big Red Box Monitor',s:'Tool 02 · 12 Metro New Orleans Locations',bg:'linear-gradient(135deg,#CC2222,#881010)'},
+  p03:{i:'📣',t:'Social Media Director',s:'Tool 03 · Content for All Platforms',bg:'linear-gradient(135deg,#3A9E68,#1A5030)'},
+  p04:{i:'💛',t:'Donor & Fundraising',s:'Tool 04 · CRM · Campaigns · Stewardship',bg:'linear-gradient(135deg,#A864DC,#6020A0)'},
+  p05:{i:'🙌',t:'Volunteer Coordinator',s:'Tool 07 · Roster · Scheduling · Onboarding',bg:'linear-gradient(135deg,#3A78C8,#1A4080)'},
+  p06:{i:'📝',t:'Grant Writing Assistant',s:'Tool 05 · Proposals · Need Statements · Tracker',bg:'linear-gradient(135deg,#C8A830,#806810)'},
+  p07:{i:'📊',t:'Impact Dashboard',s:'Tool 08 · Metrics · Charts · Reports',bg:'linear-gradient(135deg,#DC5050,#901818)'},
+  p08:{i:'🔍',t:'Grant Finder',s:'Tool 06 · AI Grant Research — NEW',bg:'linear-gradient(135deg,#40C8C0,#107870)'},
+  p09:{i:'🍽️',t:'Food Rescue Campaign',s:'NEW · Hotel & Restaurant Food Recovery · Ordinance Push',bg:'linear-gradient(135deg,#E07840,#883010)'},
+};
+const SBMAP={p00:0,pab:1,p01:2,p02:3,p03:4,p09:5,p04:6,p06:7,p08:8,p05:9,p07:10};
+
+function nav(id,btn){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.sbi').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  const h=HDR[id]||HDR.p00;
+  document.getElementById('thi').textContent=h.i;
+  document.getElementById('thi').style.background=h.bg;
+  document.getElementById('tht').textContent=h.t;
+  document.getElementById('ths').textContent=h.s;
+  if(id==='p02')rbRenderAll();
+  if(id==='p04')donorRender();
+  if(id==='p05'){volRender();shiftRender();}
+  if(id==='p06')grantRender();
+  if(id==='p07')impRenderAll();
+  if(id==='p08')gfSavedRender();
+  if(id==='p09'){}
+}
+function navId(id){nav(id,document.querySelectorAll('.sbi')[SBMAP[id]||0]);}
+
+function tab(btn,tcId){
+  const pg=btn.closest('.pg');
+  pg.querySelectorAll('.tt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  pg.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
+  document.getElementById(tcId).classList.add('on');
+}
+
+// === AI SYSTEM PROMPTS ===
+const SYS={
+p01:`You are the Executive Assistant for Gladewaves, a New Orleans nonprofit founded 2018 by Janie Glade. Address: 4505 S. Claiborne Ave, New Orleans, LA 70125. Phone: 504-875-1718. Email: info@gladewaves.org / janie@gladewaves.org. Website: gladewaves.org. Four programs: (1) Big Red Box — barrier-free food pantries at 12 Metro N.O. locations: St. Luke's Episcopal (N. Dorgenois), St. Rita's Catholic (Lowerline), St. Philip's Episcopal (Aurora Dr), 2nd District Police (Broadway), Kids of Excellence (Higgins Blvd), Trinity Community Center (Joliet), Our Lady of Prompt Succor (Chalmette), St. Mark's Episcopal (Harvey), St. Martin's Episcopal (Metairie), Marine & Mt. Moriah Church (Jefferson), Greater Good Hope Baptist (Norco). "Take what you need, give what you can." Program Director: Mark Azzinari. (2) HandUp — $500 housewares boxes + $100 grocery gift cards for people leaving transitional housing; partners: Unity for the Homeless, Hotel Hope, Innocence Project. (3) Senior Outreach — free monthly luncheons and lecture series Sept-June for 55+ at 6 sites (Kinship Senior Center, Gates of Prayer, Greater Good Hope, New Home Ministries, St. Philip's, New Home Family Worship). (4) Thanksgiving Day Lunch — annual community event. Mission: "All people have the right to food, shelter, education, companionship, and tools for a productive life." Boots on the ground. Donations: PayPal (paypal.com/fundraiser/charity/3635991), CashApp ($GladewavesIn), mail. Write in warm, professional New Orleans community voice.`,
+p02:`You are the Big Red Box Coordinator for Gladewaves in New Orleans. Manage 12 barrier-free community food pantry locations across Metro N.O.: St. Luke's Episcopal (1222 N. Dorgenois), St. Rita's Catholic (2729 Lowerline), St. Philip's Episcopal (3643 Aurora Dr), 2nd District Police (3401 Broadway), Kids of Excellence (3301 Higgins), Trinity Community Center (3908 Joliet), Our Lady of Prompt Succor (2320 Paris Rd, Chalmette), St. Mark's Episcopal (3245 Manhattan Blvd, Harvey), St. Martin's Episcopal (2216 Metairie Rd), Marine & Mt. Moriah (3034 Andover, Jefferson), Greater Good Hope Baptist (47 Cathy, Norco). 6th District Police currently out of commission. Program Director: Mark Azzinari. Help coordinate restocking, volunteers, and community communication.`,
+p03:`You are the Social Media Director for Gladewaves (gladewaves.org), a New Orleans nonprofit. Write platform-specific content: Facebook (150-300 words, storytelling, strong CTA, warm community tone), Instagram (80-150 words, punchy opener, 10-15 hashtags: #Gladewaves #NOLA #NewOrleans #FoodInsecurity #BigRedBox #CommunityLove #SWLA #504), Twitter/X (under 280 chars, link to gladewaves.org), NextDoor (100-200 words, conversational, no hashtags, neighborhood focus), Press Release (AP style, New Orleans dateline, quote from Janie Glade), Newsletter (warm, 3-4 sections with intro, program highlight, call to action). Four programs: Big Red Box, HandUp, Senior Outreach (Sept-June, 6 sites), Thanksgiving Lunch. Always dignified, community-first, hopeful. Phone: 504-875-1718. Social: @gladewaves.`,
+p04:`You are the Donor & Fundraising Director for Gladewaves, a New Orleans nonprofit. Programs: Big Red Box (12 community pantry locations), HandUp ($500 housewares + $100 gift cards for formerly homeless via Unity for the Homeless, Hotel Hope, Innocence Project), Senior Outreach (monthly luncheons 6 sites, Sept-June), Thanksgiving Day Lunch. Community need: 87,170 food insecure in Orleans Parish, 52% of N.O. households can't afford basics, 39% of children in poverty. Donate: PayPal (paypal.com/fundraiser/charity/3635991), CashApp ($GladewavesIn), Amazon Wishlist, mail 4505 S. Claiborne Ave, New Orleans LA 70125. Make donors feel like community heroes. Never guilt-trip. Show concrete impact.`,
+p05:`You are the Volunteer Coordinator for Gladewaves in New Orleans. Key volunteer roles: Big Red Box Captains (maintain pantries at churches, police stations, community centers), Senior Outreach luncheon helpers (6 sites, Sept-June, monthly), HandUp box packers, Thanksgiving Lunch volunteers, Intern Program (coordinated by board member David Linnemeyer), annual coat drive volunteers. Contact: 504-875-1718, info@gladewaves.org. Be warm, energizing, and specific about the community impact in New Orleans.`,
+p06:`You are the Grant Writing Director for Gladewaves. Org: Founded 2018. ED: Janie Glade (Loyola grad, 22 yrs event planning). Address: 4505 S. Claiborne Ave, New Orleans, LA 70125. Phone: 504-875-1718. Email: info@gladewaves.org. Board includes: Louis Glade MD (President), Susan Peppard Esq, Judy Kang MD, Matt Berger JD/MBA (Humana Regional President), Marylyn Rigby, Catherine Hudson MD, Jeff Fernandez (CEO Ochsner Health Plan), Michael Carbo Esq, David Linnemeyer, Renée Davenport (34yrs Catholic Charities). Programs: (1) Big Red Box — 12 barrier-free community food pantries in Metro N.O., Director Mark Azzinari; (2) HandUp — $500 housewares + $100 grocery gift cards for transitionally-housed (Unity for the Homeless, Hotel Hope, Innocence Project); (3) Senior Outreach — free monthly luncheons + lectures for 55+, Sept-June, 6 sites; (4) Thanksgiving Day Lunch. Need data: 87,170 food insecure in Orleans Parish, 52% N.O. households can't afford basics, 39% N.O. children in poverty, isolated seniors have 60% higher dementia risk. Write professional, evidence-based, compelling grant content.`,
+p07:`You are the Impact Reporting Director for Gladewaves, a New Orleans nonprofit with four programs: Big Red Box (12 pantry locations), HandUp (housewares for formerly homeless), Senior Outreach (monthly luncheons), Thanksgiving Day Lunch. Turn program data into compelling narrative reports for boards, donors, and grant funders. New Orleans community context: 87,170 food insecure in Orleans Parish. Warm, professional, impactful.`,
+p08:`You are a Grant Research Specialist for Gladewaves, a Metro New Orleans Louisiana nonprofit (gladewaves.org, 504-875-1718). Founded 2018. Programs: Big Red Box (12 barrier-free community food pantry locations at churches, schools, police stations), HandUp ($500 housewares + $100 grocery cards for formerly transitionally-housed), Senior Outreach (free monthly luncheons for 55+, 6 sites, Sept-June), Thanksgiving Day Lunch. Need: 87,170 food insecure in Orleans Parish. Find real grant opportunities: Louisiana foundations (Greater New Orleans Foundation, Helis Foundation, Booth-Bricker Fund), USDA programs, HUD CDBG, faith-based funders, federal nutrition programs, corporate giving, community foundations. Be specific, accurate, and actionable.`,
+p09:`You are the Food Rescue Campaign Director for Gladewaves, a New Orleans nonprofit led by Executive Director Janie Glade (janie@gladewaves.org, 504-875-1718, 4505 S. Claiborne Ave, New Orleans, LA 70125). Gladewaves is launching a major initiative to rescue unused food — both prepared food and pantry stock — from New Orleans hotels and restaurants before it is discarded. This requires a New Orleans City Council ordinance that: (1) explicitly authorizes food donation by hospitality businesses, (2) removes civil and criminal liability from participating businesses, and (3) establishes a clear pickup and documentation process. KEY FACTS: The federal Bill Emerson Good Samaritan Food Donation Act (42 U.S.C. § 1791) already provides federal liability protection for good-faith food donors to nonprofits — the city ordinance creates local clarity and removes perceived risk. CITY PRECEDENTS: New York City (Local Law 52, 2021 — mandates surplus food donation for large food establishments), Denver (Good Food Ordinance with explicit liability shield), San Francisco (food recovery hierarchy ordinance), Los Angeles (food recovery ordinance). NEW ORLEANS CITY COUNCIL (current 2026): At-Large: JP Morrell (JP.Morrell@nola.gov, 504-658-1070) and Matthew Willard (Matthew.Willard@nola.gov, 504-658-1060). District A: Aimee McCarron (Aimee.McCarron@nola.gov, 504-658-1010). District B: Lesli Harris (Lesli.Harris@nola.gov, 504-658-1020). District C: Freddie King III (Freddie.King@nola.gov, 504-658-1030). District D: Eugene J. Green (eugene.green@nola.gov, 504-658-1040). District E: Jason Hughes (Jason.Hughes@nola.gov, 504-658-1050). All at City Hall, 1300 Perdido Street, New Orleans, LA 70112. NOTE: Helena Moreno is now the Mayor of New Orleans — she is no longer on the council, but as mayor she could be a powerful ally for this initiative. COMMUNITY CONTEXT: 87,170 people food insecure in Orleans Parish. New Orleans has a world-class restaurant and hotel industry generating enormous food surplus daily. Gladewaves already operates 12 Big Red Box food pantry locations across Metro New Orleans and serves seniors at 6 monthly luncheon sites — the infrastructure to receive and distribute rescued food exists. FUNDRAISER SUCCESS: Gladewaves raised $18,000 at their May 21, 2026 fundraiser. Write professional, compelling, persuasive content for council members, hotel/restaurant partners, press, and the public. Always frame liability removal as the primary business benefit. Reference federal law and city precedents to build credibility.`
+};
+
+// === CHAT ENGINE ===
+const cHist={p01:[],p02:[],p03:[],p04:[],p05:[],p06:[],p07:[],p08:[],p09:[]};
+const cLock={};
+const ICONS={p01:'🧭',p02:'📦',p03:'🌊',p04:'💛',p05:'🙌',p06:'📝',p07:'📊',p08:'🔍',p09:'🍽️'};
+const ACS={p01:['#C8973A','#7A5010'],p02:['#CC2222','#881010'],p03:['#3A9E68','#1A5030'],p04:['#A864DC','#6020A0'],p05:['#3A78C8','#1A4080'],p06:['#C8A830','#806810'],p07:['#DC5050','#901818'],p08:['#40C8C0','#107870'],p09:['#E07840','#883010']};
+
+async function cs(pid,override){
+  if(cLock[pid])return;
+  const pg=document.getElementById(pid);
+  const ta=pg.querySelector('textarea');
+  const msg=override||(ta?.value.trim());
+  if(!msg)return;
+  if(ta&&!override)ta.value='';
+  cLock[pid]=true;
+  const msgsEl=document.getElementById('ms-'+pid);
+  const [a1,a2]=ACS[pid]||['#C8973A','#7A5010'];
+  const icon=ICONS[pid]||'🌊';
+  cHist[pid].push({role:'user',content:msg});
+  const ud=document.createElement('div');ud.className='mrow u';
+  ud.innerHTML=`<div class="bbl u">${esc(msg)}</div><div class="av u">👤</div>`;
+  msgsEl.appendChild(ud);
+  const td=document.createElement('div');td.className='mrow';
+  td.innerHTML=`<div class="av ai" style="background:linear-gradient(135deg,${a1},${a2})">${icon}</div><div class="dots"><div class="dot"></div><div class="dot" style="animation-delay:.2s"></div><div class="dot" style="animation-delay:.4s"></div></div>`;
+  msgsEl.appendChild(td);
+  const wrap=msgsEl.closest('.chm');if(wrap)wrap.scrollTop=99999;
+  let extra='';
+  if(pid==='p02')extra='\n\nCurrent box data: '+boxes.map(b=>`${b.name}: ${b.status.toUpperCase()} ${b.status!=='outofservice'?'('+b.level+'%)':''}`).join(', ');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:(SYS[pid]||'')+extra,messages:cHist[pid]})});
+    const d=await res.json();
+    const reply=d.content?.[0]?.text||'Something went wrong. Please try again.';
+    cHist[pid].push({role:'assistant',content:reply});
+    td.remove();
+    const rd=document.createElement('div');rd.className='mrow';
+    rd.innerHTML=`<div class="av ai" style="background:linear-gradient(135deg,${a1},${a2})">${icon}</div><div class="bbl ai">${fmt(reply)}</div>`;
+    msgsEl.appendChild(rd);
+  }catch{
+    td.remove();
+    const rd=document.createElement('div');rd.className='mrow';
+    rd.innerHTML=`<div class="av ai" style="background:linear-gradient(135deg,${a1},${a2})">${icon}</div><div class="bbl ai" style="color:var(--red-l)">Connection error — please try again.</div>`;
+    msgsEl.appendChild(rd);
+  }finally{
+    cLock[pid]=false;
+    const w2=msgsEl.closest('.chm');if(w2)w2.scrollTop=99999;
+  }
+}
+function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n\n/g,'</p><p style="margin-top:4px">').replace(/\n/g,'<br>');}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// === BIG RED BOX ===
+const BSTAT={
+  critical:{c:'#E05050',bg:'rgba(220,50,50,.12)',lbl:'CRITICAL',ico:'🚨'},
+  low:{c:'#E0A040',bg:'rgba(224,160,64,.12)',lbl:'LOW',ico:'⚠️'},
+  good:{c:'#5A9E6F',bg:'rgba(90,158,111,.12)',lbl:'GOOD',ico:'✅'},
+  full:{c:'#5A8FE0',bg:'rgba(90,143,224,.12)',lbl:'FULL',ico:'📦'},
+  outofservice:{c:'#666',bg:'rgba(100,100,100,.1)',lbl:'OUT OF SERVICE',ico:'🚫'}
+};
+let boxes=[
+  {id:'b1',name:"St. Luke's Episcopal Church",addr:'1222 N. Dorgenois St, New Orleans',type:'Church',status:'low',lvl:18,ts:Date.now()-3600000,cap:'Box Captain',rpts:14,served:92},
+  {id:'b2',name:"St. Rita's Catholic Church",addr:'2729 Lowerline St, New Orleans',type:'Church',status:'good',lvl:65,ts:Date.now()-7200000,cap:'Box Captain',rpts:9,served:61},
+  {id:'b3',name:"St. Philip's Episcopal Church",addr:'3643 Aurora Dr, New Orleans',type:'Church',status:'good',lvl:72,ts:Date.now()-5400000,cap:'Box Captain',rpts:11,served:78},
+  {id:'b4',name:'2nd District Police Station',addr:'3401 Broadway St, New Orleans',type:'Police Station',status:'critical',lvl:4,ts:Date.now()-1800000,cap:'Officer Contact',rpts:22,served:155},
+  {id:'b5',name:'Kids of Excellence',addr:'3301 Higgins Blvd, New Orleans',type:'School',status:'low',lvl:22,ts:Date.now()-3600000,cap:'Box Captain',rpts:16,served:104},
+  {id:'b6',name:'Trinity Community Center',addr:'3908 Joliet St, New Orleans',type:'Community Center',status:'full',lvl:94,ts:Date.now()-28800000,cap:'Box Captain',rpts:7,served:38},
+  {id:'b7',name:'Our Lady of Prompt Succor',addr:'2320 Paris Rd, Chalmette',type:'Church',status:'good',lvl:55,ts:Date.now()-10800000,cap:'Box Captain',rpts:8,served:52},
+  {id:'b8',name:"St. Mark's Episcopal Church",addr:'3245 Manhattan Blvd, Harvey',type:'Church',status:'full',lvl:88,ts:Date.now()-14400000,cap:'Box Captain',rpts:5,served:29},
+  {id:'b9',name:'6th District Police Station',addr:'1930 MLK Jr Blvd, New Orleans',type:'Police Station',status:'outofservice',lvl:0,ts:Date.now()-2592000000,cap:'N/A',rpts:0,served:0},
+  {id:'b10',name:"St. Martin's Episcopal Church",addr:'2216 Metairie Rd, Metairie',type:'Church',status:'good',lvl:60,ts:Date.now()-10800000,cap:'Box Captain',rpts:10,served:67},
+  {id:'b11',name:'Marine & Mt. Moriah Church',addr:'3034 Andover St, Jefferson',type:'Church',status:'low',lvl:20,ts:Date.now()-3600000,cap:'Box Captain',rpts:12,served:81},
+  {id:'b12',name:'Greater Good Hope Baptist',addr:'47 Cathy St, Norco',type:'Church',status:'good',lvl:68,ts:Date.now()-7200000,cap:'Box Captain',rpts:8,served:55},
+];
+let rbF='all',reportBoxId=null,reportStat=null;
+
+function ago(ts){const d=Math.floor((Date.now()-ts)/60000);if(d<60)return d+'m ago';if(d<1440)return Math.floor(d/60)+'h ago';return Math.floor(d/1440)+'d ago';}
+
+function rbRenderStats(){
+  const c={};boxes.forEach(b=>c[b.status]=(c[b.status]||0)+1);
+  const tot=boxes.reduce((s,b)=>s+b.served,0);
+  document.getElementById('rb-stats').innerHTML=`
+    <div class="sc"><div class="sv" style="color:#E05050">${c.critical||0}</div><div class="sl">Critical</div></div>
+    <div class="sc"><div class="sv" style="color:#E0A040">${c.low||0}</div><div class="sl">Low Stock</div></div>
+    <div class="sc"><div class="sv" style="color:#5A9E6F">${(c.good||0)+(c.full||0)}</div><div class="sl">Good / Full</div></div>
+    <div class="sc"><div class="sv" style="color:#666">${c.outofservice||0}</div><div class="sl">Out of Svc</div></div>
+    <div class="sc"><div class="sv" style="color:var(--gold)">${boxes.length}</div><div class="sl">Total Boxes</div></div>
+    <div class="sc"><div class="sv" style="color:#A864DC">${tot}</div><div class="sl">Served Total</div></div>`;
+}
+
+function rbCard(b,reportFn){
+  const s=BSTAT[b.status]||BSTAT.good;const oos=b.status==='outofservice';
+  return `<div class="boxcard ${b.status==='critical'?'crit':''}" style="border-top:3px solid ${s.c};opacity:${oos?.55:1}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div style="flex:1;min-width:0"><div style="font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--cream);font-style:italic;line-height:1.25;transition:color .3s">${b.name}</div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);margin-top:1px">📍 ${b.addr}</div></div>
+      <span class="pill" style="background:${s.bg};border:1px solid ${s.c}44;color:${s.c};flex-shrink:0;margin-left:6px">${s.ico} ${s.lbl}</span>
+    </div>
+    ${!oos?`<div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);text-transform:uppercase">Fill</span><span style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:${s.c};line-height:1">${b.lvl}%</span></div><div class="barbg"><div class="barfill" style="width:${b.lvl}%;background:linear-gradient(90deg,${s.c}88,${s.c})"></div></div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:9px">
+      <div style="background:var(--dim);border-radius:5px;padding:4px 6px"><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase;margin-bottom:1px">Last Report</div><div style="font-size:9px;color:var(--muted)">${oos?'Out of service':ago(b.ts)}</div></div>
+      <div style="background:var(--dim);border-radius:5px;padding:4px 6px"><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase;margin-bottom:1px">Total Served</div><div style="font-size:9px;color:var(--muted)">${oos?'—':b.served}</div></div>
+    </div>
+    ${!oos?`<div style="display:flex;gap:5px">
+      <button onclick="${reportFn}('${b.id}')" style="flex:1;padding:6px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;background:rgba(204,34,34,.08);border:1px solid rgba(204,34,34,.18);color:#CC4444;transition:all .2s">📋 Report</button>
+      ${b.status==='critical'||b.status==='low'?`<button onclick="rbRestock('${b.id}')" style="flex:1;padding:6px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;background:rgba(90,184,112,.08);border:1px solid rgba(90,184,112,.18);color:#5AB870;transition:all .2s">✅ Restocked</button>`:''}
+    </div>`:'<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:#666;text-align:center;padding:3px">Temporarily out of commission</div>'}
+  </div>`;
+}
+
+function rbRenderGrid(elId,fn){
+  const f=rbF==='all'?boxes:boxes.filter(b=>b.status===rbF);
+  document.getElementById(elId).innerHTML=f.map(b=>rbCard(b,fn)).join('');
+}
+
+function rbRenderManage(){
+  document.getElementById('rb-manage-list').innerHTML=boxes.map(b=>{
+    const s=BSTAT[b.status]||BSTAT.good;
+    return `<div style="background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:9px 12px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;transition:background .3s">
+      <div style="flex:1;min-width:140px"><div style="font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--cream);font-style:italic;transition:color .3s">${b.name}</div><div style="font-size:9px;color:var(--muted)">${b.addr}</div></div>
+      <div style="display:flex;gap:9px;align-items:center">
+        <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:${s.c}">${b.status==='outofservice'?'—':b.lvl+'%'}</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase">Fill</div></div>
+        <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted)">${b.rpts}</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase">Reports</div></div>
+        <span class="pill" style="background:${s.bg};border:1px solid ${s.c}44;color:${s.c}">${s.ico} ${s.lbl}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function rbRenderAll(){
+  rbRenderStats();
+  rbRenderGrid('rb-grid','rbOpenReport');
+  rbRenderGrid('rb-report-grid','rbOpenReport');
+  rbRenderManage();
+  const g=document.getElementById('rb-greeting');
+  if(g){const crit=boxes.filter(b=>b.status==='critical').length,low=boxes.filter(b=>b.status==='low').length;
+    g.innerHTML=`Monitoring <strong>${boxes.length}</strong> Big Red Box locations across Metro New Orleans. <strong style="color:#E05050">${crit} critical</strong>, <strong style="color:#E0A040">${low} low stock</strong>. How can I help?`;}
+}
+
+function rbFilter(f){rbF=f;rbRenderGrid('rb-grid','rbOpenReport');}
+
+function rbOpenReport(id){
+  reportBoxId=id;reportStat=null;
+  const b=boxes.find(x=>x.id===id);
+  document.getElementById('m-report-title').textContent='Report: '+b.name;
+  document.getElementById('m-report-note').value='';
+  document.getElementById('m-report-grid').innerHTML=Object.entries(BSTAT).filter(([k])=>k!=='outofservice').map(([k,s])=>`
+    <div onclick="reportStat='${k}';document.querySelectorAll('.rsopt').forEach(e=>{e.style.background='var(--ibg)';e.style.borderColor='var(--border)'});this.style.background='${s.bg}';this.style.borderColor='${s.c}'"
+      class="rsopt" style="border-radius:7px;padding:9px 4px;cursor:pointer;text-align:center;border:1.5px solid var(--border);background:var(--ibg);transition:all .18s">
+      <div style="font-size:16px;margin-bottom:2px">${s.ico}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:${s.c};font-weight:700;letter-spacing:.04em">${s.lbl}</div>
+    </div>`).join('');
+  document.getElementById('m-report').classList.add('open');
+}
+
+function rbSubmitReport(){
+  if(!reportStat||!reportBoxId)return;
+  const lvlMap={critical:4,low:20,good:65,full:95};
+  boxes=boxes.map(b=>b.id===reportBoxId?{...b,status:reportStat,lvl:lvlMap[reportStat]||50,ts:Date.now(),rpts:b.rpts+1}:b);
+  document.getElementById('m-report').classList.remove('open');
+  rbRenderAll();toast('✅ Report submitted!');
+}
+
+function rbRestock(id){boxes=boxes.map(b=>b.id===id?{...b,status:'full',lvl:95,ts:Date.now()}:b);rbRenderAll();toast('📦 Box marked restocked!');}
+
+function rbAddBox(){
+  const name=document.getElementById('nb-name').value.trim();if(!name)return;
+  boxes.push({id:'b'+Date.now(),name,addr:document.getElementById('nb-addr').value,type:document.getElementById('nb-type').value,status:'full',lvl:95,ts:Date.now(),cap:document.getElementById('nb-cap').value||'Unassigned',rpts:0,served:0});
+  document.getElementById('m-addbox').classList.remove('open');
+  ['nb-name','nb-addr','nb-cap'].forEach(id=>document.getElementById(id).value='');
+  rbRenderAll();toast('🎉 '+name+' added!');
+}
+
+// === SOCIAL MEDIA ===
+const PLATS={facebook:{ico:'📘',name:'Facebook',c:'#4A90D9'},instagram:{ico:'📸',name:'Instagram',c:'#E07898'},twitter:{ico:'🐦',name:'Twitter/X',c:'#5AA8D9'},nextdoor:{ico:'🏘️',name:'NextDoor',c:'#5AC87A'},press:{ico:'📰',name:'Press Release',c:'#D9A84A'},newsletter:{ico:'📧',name:'Newsletter',c:'#A87AD9'}};
+let curPlat='facebook',socPosts=[],curSocContent=null,socBusy=false;
+try{const s=localStorage.getItem('gw-soc');if(s)socPosts=JSON.parse(s);}catch{}
+
+document.getElementById('platg').innerHTML=Object.entries(PLATS).map(([k,p])=>`
+  <div class="plato ${k==='facebook'?'on':''}" onclick="setPlatform('${k}',this)">
+    <div class="platoicon">${p.ico}</div>
+    <div class="platoname">${p.name.replace(' Release','')}</div>
+  </div>`).join('');
+
+function setPlatform(k,el){curPlat=k;document.querySelectorAll('.plato').forEach(e=>e.classList.remove('on'));el.classList.add('on');}
+
+async function socGen(){
+  if(socBusy)return;
+  const topic=document.getElementById('soc-topic').value.trim();if(!topic)return;
+  socBusy=true;const btn=document.getElementById('soc-gen-btn');btn.disabled=true;btn.textContent='✨ Generating...';
+  document.getElementById('soc-out').innerHTML='<div style="display:flex;justify-content:center;padding:36px"><div style="width:24px;height:24px;border:3px solid rgba(58,158,104,.15);border-top:3px solid #3A9E68;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+  document.getElementById('soc-acts').innerHTML='';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p03,
+        messages:[{role:'user',content:`Generate a ${PLATS[curPlat].name} post for Gladewaves.\nTopic: ${topic}\nExtra context: ${document.getElementById('soc-ctx').value||'none'}\nFollow all format and length guidelines for this platform.`}]})});
+    const data=await res.json();
+    curSocContent=data.content?.[0]?.text||'Error generating post.';
+    const p=PLATS[curPlat];
+    document.getElementById('soc-out').innerHTML=`<div style="display:flex;gap:4px;margin-bottom:7px"><span class="pill" style="background:${p.c}18;border:1px solid ${p.c}33;color:${p.c}">${p.ico} ${p.name}</span><span class="pill" style="background:var(--dim);border:1px solid var(--border2);color:var(--muted)">${curSocContent.length} chars</span></div><div style="white-space:pre-wrap;line-height:1.75">${curSocContent}</div>`;
+    document.getElementById('soc-acts').innerHTML=`<button class="btng" style="font-size:8px;padding:3px 9px" onclick="navigator.clipboard?.writeText(curSocContent);toast('Copied!')">Copy</button><button class="btng" style="font-size:8px;padding:3px 9px;color:var(--gold);border-color:rgba(200,151,58,.28)" onclick="socSave()">⭐ Save</button>`;
+  }catch{document.getElementById('soc-out').textContent='Generation failed. Please try again.';}
+  finally{socBusy=false;btn.disabled=false;btn.textContent='✨ Generate Post';}
+}
+
+function socSave(){if(!curSocContent)return;socPosts.unshift({id:'sp'+Date.now(),plat:curPlat,content:curSocContent,date:new Date().toLocaleDateString()});try{localStorage.setItem('gw-soc',JSON.stringify(socPosts));}catch{}socLibRender();toast('✅ Saved!');}
+
+function socLibRender(){
+  const el=document.getElementById('soc-lib');
+  document.getElementById('soc-lib-ct').textContent=socPosts.length+' saved';
+  if(!socPosts.length){el.innerHTML='<div style="text-align:center;padding:36px;color:var(--muted);font-family:\'Playfair Display\',serif;font-style:italic">No saved posts yet — generate one and save it.</div>';return;}
+  el.innerHTML=socPosts.map((p,i)=>{const pl=PLATS[p.plat]||{c:'#7AD9A8',ico:'📝',name:'Post'};return `<div style="background:var(--card);border:1px solid var(--border2);border-left:3px solid ${pl.c};border-radius:9px;padding:11px;margin-bottom:7px;transition:background .3s"><div style="display:flex;gap:4px;margin-bottom:5px"><span class="pill" style="background:${pl.c}18;border:1px solid ${pl.c}33;color:${pl.c}">${pl.ico} ${pl.name}</span><span style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);align-self:center">${p.date||''}</span></div><div style="font-size:10px;color:var(--muted);line-height:1.65;max-height:90px;overflow:hidden;white-space:pre-wrap;margin-bottom:7px">${p.content}</div><div style="display:flex;gap:5px"><button class="btng" style="font-size:8px;padding:2px 8px" onclick="navigator.clipboard?.writeText(socPosts[${i}].content);toast('Copied!')">Copy</button><button class="btng" style="font-size:8px;padding:2px 8px;color:#5A2828;border-color:rgba(255,80,80,.13)" onclick="socPosts.splice(${i},1);try{localStorage.setItem('gw-soc',JSON.stringify(socPosts))}catch{};socLibRender()">Delete</button></div></div>`;}).join('');}
+
+// === DONOR CRM ===
+let donors=[
+  {id:'d1',name:'Margaret Wilson',email:'mwilson@email.com',amt:1200,status:'monthly',last:'May 2026',notes:"Loves the Big Red Box program"},
+  {id:'d2',name:'Robert & Anne Chen',email:'rchen@email.com',amt:500,status:'active',last:'April 2026',notes:"Connected through St. Rita's Church"},
+  {id:'d3',name:'Sandra Davis',email:'sdavis@email.com',amt:2500,status:'active',last:'March 2026',notes:'Major supporter — Thanksgiving Lunch sponsor'},
+  {id:'d4',name:'Lakeside Community Bank',email:'community@lakebank.com',amt:5000,status:'monthly',last:'January 2026',notes:'Corporate sponsor — Big Red Box program'},
+  {id:'d5',name:'Patricia Moore',email:'pmoore@email.com',amt:150,status:'lapsed',last:'Nov 2025',notes:'Gave twice in 2025'},
+  {id:'d6',name:'Rev. James Washington',email:'jwash@email.com',amt:75,status:'prospect',last:'None yet',notes:'Met at Senior Outreach luncheon'},
+];
+const DST={active:{c:'#5A9E6F',bg:'rgba(90,158,111,.1)'},monthly:{c:'#A864DC',bg:'rgba(168,100,220,.1)'},lapsed:{c:'#E07840',bg:'rgba(224,120,64,.1)'},prospect:{c:'#5A8FE0',bg:'rgba(90,143,224,.1)'}};
+
+function donorRender(){
+  document.getElementById('donor-grid').innerHTML=donors.map(d=>{
+    const s=DST[d.status]||DST.prospect;
+    return `<div class="card" style="padding:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div style="font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--cream);font-style:italic;transition:color .3s">${d.name}</div><span class="pill" style="background:${s.bg};border:1px solid ${s.c}44;color:${s.c};flex-shrink:0;margin-left:5px">${d.status}</span></div>
+    <div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);margin-bottom:4px">${d.email}</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#A864DC;margin-bottom:2px">$${d.amt.toLocaleString()}</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:3px">Last gift: ${d.last}</div>
+    ${d.notes?`<div style="font-size:9px;color:var(--muted);margin-bottom:8px;font-style:italic">${d.notes}</div>`:'<div style="margin-bottom:8px"></div>'}
+    <button class="btng" style="width:100%;font-size:8px" onclick="cs('p04','Write a personalized donor message to ${d.name.replace(/'/g,"\\'")} who has given \\$${d.amt} to Gladewaves. Status: ${d.status}. Notes: ${(d.notes||'').replace(/'/g,"\\'")}.')">✉️ Draft Email</button></div>`;
+  }).join('');}
+
+function donorAdd(){const name=document.getElementById('nd-name').value.trim();if(!name)return;donors.push({id:'d'+Date.now(),name,email:document.getElementById('nd-email').value,amt:parseFloat(document.getElementById('nd-amt').value)||0,status:document.getElementById('nd-status').value,last:'Just added',notes:''});document.getElementById('m-adddonor').classList.remove('open');donorRender();toast('✅ Donor added: '+name);}
+
+async function planCampaign(){
+  const goal=document.getElementById('camp-goal').value.trim();if(!goal)return;
+  const btn=document.getElementById('camp-btn');btn.disabled=true;btn.textContent='Planning...';
+  const out=document.getElementById('camp-out');out.style.display='block';
+  out.innerHTML='<div style="display:flex;justify-content:center;padding:14px"><div style="width:22px;height:22px;border:3px solid rgba(168,100,220,.2);border-top:3px solid #A864DC;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p04,
+        messages:[{role:'user',content:`Full fundraising campaign plan for Gladewaves.\nGoal: ${goal}\nTimeline: ${document.getElementById('camp-time').value}\nAudience: ${document.getElementById('camp-aud').value}\nContext: ${document.getElementById('camp-ctx').value}`}]})});
+    const d=await res.json();out.innerHTML=fmt(d.content?.[0]?.text||'Error.');
+  }catch{out.innerHTML='Failed. Try again.';}finally{btn.disabled=false;btn.textContent='🎯 Generate Campaign Plan';}
+}
+
+// === VOLUNTEERS ===
+let volunteers=[
+  {id:'v1',name:'Maria Gonzalez',role:'Big Red Box Captain',skills:'Spanish, Organizing, Driving',hours:52,shifts:13},
+  {id:'v2',name:'David Park',role:'Distribution Helper',skills:'Heavy Lifting, Cooking',hours:24,shifts:6},
+  {id:'v3',name:'Linda Johnson',role:'Senior Outreach Host',skills:'Hospitality, Event Planning',hours:38,shifts:10},
+  {id:'v4',name:'Marcus Bell',role:'Driver',skills:'CDL License, Logistics',hours:65,shifts:16},
+  {id:'v5',name:'Theresa Kim',role:'HandUp Box Packer',skills:'Organization, Korean',hours:18,shifts:5},
+];
+let shifts=[
+  {id:'s1',name:"Big Red Box Restock — Uptown Route",date:'2026-05-31T09:00',loc:"St. Luke's + St. Rita's",needed:4,assigned:3},
+  {id:'s2',name:'Senior Outreach Luncheon — Kinship Center',date:'2026-06-03T11:00',loc:'921 S Carrollton Ave',needed:6,assigned:6},
+  {id:'s3',name:"Red Box Restock — Westbank",date:'2026-06-07T09:00',loc:"St. Mark's Harvey",needed:3,assigned:1},
+  {id:'s4',name:'New Volunteer Orientation',date:'2026-06-01T14:00',loc:'4505 S. Claiborne Ave',needed:2,assigned:2},
+];
+
+function volRender(){document.getElementById('vol-grid').innerHTML=volunteers.map(v=>`<div class="card" style="padding:12px"><div style="font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:2px;transition:color .3s">${v.name}</div><div style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(58,120,200,.65);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">${v.role}</div><div style="font-size:9px;color:var(--muted);margin-bottom:8px">🎯 ${v.skills}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px"><div style="background:var(--dim);border-radius:5px;padding:4px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#5AA8DC">${v.hours}</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase">Hours</div></div><div style="background:var(--dim);border-radius:5px;padding:4px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#5AA8DC">${v.shifts}</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase">Shifts</div></div></div><button class="btng" style="width:100%;font-size:8px" onclick="cs('p05','Write a personalized appreciation for ${v.name.replace(/'/g,"\\'")} who has volunteered ${v.hours} hours as a ${v.role} for Gladewaves.')">✍️ Draft Message</button></div>`).join('');}
+
+function shiftRender(){document.getElementById('shift-grid').innerHTML=shifts.map(s=>{const full=s.assigned>=s.needed;const d=s.date?new Date(s.date).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}):'TBD';const t=s.date?new Date(s.date).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';return `<div class="card" style="padding:12px"><div style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(58,120,200,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">${d} ${t}</div><div style="font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:3px;line-height:1.3;transition:color .3s">${s.name}</div><div style="font-size:9px;color:var(--muted);margin-bottom:6px">📍 ${s.loc}<br>👥 ${s.assigned}/${s.needed} volunteers</div><span class="pill" style="background:${full?'rgba(90,158,111,.1)':'rgba(224,160,64,.1)'};border:1px solid ${full?'rgba(90,158,111,.28)':'rgba(224,160,64,.28)'};color:${full?'#5A9E6F':'#E0A040'}">${full?'✅ FULL':'⚡ OPEN'}</span></div>`;}).join('');}
+
+function volAdd(){const name=document.getElementById('nv-name').value.trim();if(!name)return;volunteers.push({id:'v'+Date.now(),name,role:document.getElementById('nv-role').value,skills:document.getElementById('nv-skills').value,hours:0,shifts:0});document.getElementById('m-addvol').classList.remove('open');volRender();toast('✅ '+name+' added!');}
+function shiftAdd(){const name=document.getElementById('ns-name').value.trim();if(!name)return;shifts.push({id:'s'+Date.now(),name,date:document.getElementById('ns-date').value,loc:document.getElementById('ns-loc').value,needed:parseInt(document.getElementById('ns-needed').value)||4,assigned:0});document.getElementById('m-addshift').classList.remove('open');shiftRender();toast('📅 Shift added!');}
+
+// === GRANT WRITING ===
+let grantTracker=[
+  {id:'g1',funder:'Greater New Orleans Foundation',amt:'$15,000',deadline:'2026-06-30',status:'drafting'},
+  {id:'g2',funder:'USDA Community Food Projects',amt:'$35,000',deadline:'2026-08-01',status:'researching'},
+  {id:'g3',funder:'Catholic Charities Archdiocese',amt:'$5,000',deadline:'2026-05-31',status:'submitted'},
+  {id:'g4',funder:'Louisiana Endowment for Humanities',amt:'$8,000',deadline:'2026-04-01',status:'awarded'},
+  {id:'g5',funder:'Entergy New Orleans Foundation',amt:'$10,000',deadline:'2026-07-15',status:'researching'},
+];
+const GST={researching:{c:'#5A8FE0',bg:'rgba(90,143,224,.1)',lbl:'Researching'},drafting:{c:'#C8A830',bg:'rgba(200,168,48,.1)',lbl:'Drafting'},submitted:{c:'#E07840',bg:'rgba(224,120,64,.1)',lbl:'Submitted'},awarded:{c:'#5A9E6F',bg:'rgba(90,158,111,.1)',lbl:'Awarded ✓'},declined:{c:'#E05050',bg:'rgba(224,80,80,.1)',lbl:'Declined'}};
+
+function grantRender(){
+  document.getElementById('grant-grid').innerHTML=grantTracker.map(g=>{
+    const s=GST[g.status]||GST.researching;
+    const days=g.deadline?Math.ceil((new Date(g.deadline)-Date.now())/86400000):null;
+    return `<div class="card" style="padding:12px"><div style="font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:2px;transition:color .3s">${g.funder}</div><div style="font-family:'DM Mono',monospace;font-size:14px;color:#C8A830;margin-bottom:4px">${g.amt}</div>${g.deadline?`<div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--meta);margin-bottom:6px">📅 ${new Date(g.deadline).toLocaleDateString()} ${days!==null&&days>0?'· '+days+'d left':days<=0?'· <span style="color:#E05050">PAST</span>':''}</div>`:''}
+    <span class="pill" style="background:${s.bg};border:1px solid ${s.c}44;color:${s.c};margin-bottom:8px">${s.lbl}</span>
+    <div style="display:flex;gap:5px;margin-top:8px"><button class="btng" style="flex:1;font-size:8px" onclick="cs('p06','Help me draft a compelling section for a Gladewaves grant application to ${g.funder.replace(/'/g,"\\'")} for ${g.amt}.')">✍️ Draft</button><button class="btng" style="font-size:8px;color:#5A2828;border-color:rgba(255,80,80,.13)" onclick="grantTracker=grantTracker.filter(x=>x.id!=='${g.id}');grantRender()">✕</button></div></div>`;
+  }).join('');}
+
+function grantAdd(){const f=document.getElementById('ng-funder').value.trim();if(!f)return;grantTracker.push({id:'g'+Date.now(),funder:f,amt:document.getElementById('ng-amount').value,deadline:document.getElementById('ng-deadline').value,status:document.getElementById('ng-status').value});document.getElementById('m-addgrant').classList.remove('open');grantRender();toast('✅ Grant added: '+f);}
+
+async function buildProposal(){
+  const funder=document.getElementById('gb-funder').value.trim();if(!funder)return;
+  const btn=document.getElementById('gb-btn');btn.disabled=true;btn.textContent='Writing...';
+  const out=document.getElementById('gb-out');out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(200,168,48,.2);border-top:3px solid #C8A830;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p06,
+        messages:[{role:'user',content:`Write the ${document.getElementById('gb-sec').value} for a Gladewaves grant.\nFunder: ${funder}\nAmount: ${document.getElementById('gb-amount').value}\nProgram focus: ${document.getElementById('gb-prog').value}\nSpecial requirements: ${document.getElementById('gb-ctx').value}`}]})});
+    const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
+  }catch{out.textContent='Failed.';}finally{btn.disabled=false;btn.textContent='📝 Generate';}
+}
+
+// === IMPACT DASHBOARD ===
+let impEntries=[];
+try{const s=localStorage.getItem('gw-impact');if(s)impEntries=JSON.parse(s);}catch{}
+if(!impEntries.length)impEntries=[
+  {month:'2026-05',families:218,food:1680,boxes:11,hours:256,donors:14,funds:5200,seniors:142,notes:'New Big Red Box added at Greater Good Hope Baptist in Norco.'},
+  {month:'2026-04',families:192,food:1480,boxes:11,hours:218,donors:10,funds:4100,seniors:128,notes:'Senior Outreach luncheon at Kinship Center had record attendance.'},
+  {month:'2026-03',families:165,food:1220,boxes:10,hours:195,donors:8,funds:3400,seniors:110,notes:'Spring HandUp drive delivered 8 boxes via Unity for the Homeless.'},
+  {month:'2026-02',families:145,food:1010,boxes:10,hours:170,donors:6,funds:2900,seniors:96,notes:''},
+  {month:'2026-01',families:124,food:905,boxes:9,hours:150,donors:5,funds:2500,seniors:84,notes:'Started year with 9 active Big Red Box locations.'},
+];
+const mN=m=>{if(!m)return'';const[y,mo]=m.split('-');return new Date(y,parseInt(mo)-1).toLocaleDateString('en-US',{month:'short',year:'numeric'});};
+const ICS=['#DC5050','#C8A830','#E07840','#5A9E6F','#5A8FE0'];
+
+function impRenderAll(){
+  const tot={families:0,food:0,boxes:0,hours:0,donors:0,funds:0,seniors:0};
+  impEntries.forEach(e=>Object.keys(tot).forEach(k=>tot[k]+=(e[k]||0)));
+  const lat=impEntries[0]||{},prv=impEntries[1]||{};
+  const tr=(c,p)=>{if(!p)return'';const pct=Math.round((c-p)/Math.max(p,1)*100);return pct>=0?`<span style="color:#5A9E6F;font-size:8px;margin-left:3px">↑${pct}%</span>`:`<span style="color:#E05050;font-size:8px;margin-left:3px">↓${Math.abs(pct)}%</span>`;};
+  document.getElementById('imp-stats').innerHTML=`
+    <div class="sc"><div class="sv" style="color:#DC5050">${tot.families.toLocaleString()}</div><div class="sl">Families Served</div>${tr(lat.families,prv.families)}</div>
+    <div class="sc"><div class="sv" style="color:#C8A830">${tot.food.toLocaleString()}</div><div class="sl">lbs Food</div>${tr(lat.food,prv.food)}</div>
+    <div class="sc"><div class="sv" style="color:#E07840">${tot.boxes}</div><div class="sl">Box Restocks</div></div>
+    <div class="sc"><div class="sv" style="color:#5A9E6F">${tot.hours.toLocaleString()}</div><div class="sl">Vol Hours</div></div>
+    <div class="sc"><div class="sv" style="color:#A864DC">${tot.seniors.toLocaleString()}</div><div class="sl">Seniors Served</div></div>
+    <div class="sc"><div class="sv" style="color:#5A8FE0">$${tot.funds.toLocaleString()}</div><div class="sl">Funds Raised</div></div>`;
+  const rev=[...impEntries].reverse().slice(-5);
+  const mxF=Math.max(...rev.map(e=>e.families||0),1),mxFd=Math.max(...rev.map(e=>e.food||0),1);
+  document.getElementById('fam-chart').innerHTML=rev.map((e,i)=>`<div class="bcr"><div class="bcl">${mN(e.month)}</div><div class="bcw"><div class="bcf" style="width:${(e.families||0)/mxF*100}%;background:linear-gradient(90deg,${ICS[i%5]}88,${ICS[i%5]})"><span class="bcn">${e.families||0}</span></div></div></div>`).join('');
+  document.getElementById('food-chart').innerHTML=rev.map((e,i)=>`<div class="bcr"><div class="bcl">${mN(e.month)}</div><div class="bcw"><div class="bcf" style="width:${(e.food||0)/mxFd*100}%;background:linear-gradient(90deg,${ICS[(i+2)%5]}88,${ICS[(i+2)%5]})"><span class="bcn">${e.food||0}</span></div></div></div>`).join('');
+  document.getElementById('imp-entries').innerHTML=impEntries.map((e,i)=>`<div class="card" style="padding:12px"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--meta);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">${mN(e.month)}</div>${e.notes?`<div style="font-size:10px;color:var(--muted);margin-bottom:6px;line-height:1.5;font-style:italic">${e.notes}</div>`:''}<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:7px"><div style="background:var(--dim);border-radius:5px;padding:4px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:#DC5050">${e.families||0}</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase">Families</div></div><div style="background:var(--dim);border-radius:5px;padding:4px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:#C8A830">${e.food||0}</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase">lbs Food</div></div><div style="background:var(--dim);border-radius:5px;padding:4px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:#A864DC">${e.seniors||0}</div><div style="font-family:'DM Mono',monospace;font-size:6px;color:var(--meta);text-transform:uppercase">Seniors</div></div></div><button class="btng" style="font-size:7px;padding:2px 8px;color:#5A2828;border-color:rgba(255,80,80,.12)" onclick="impEntries.splice(${i},1);try{localStorage.setItem('gw-impact',JSON.stringify(impEntries))}catch{};impRenderAll()">Remove</button></div>`).join('');}
+
+function logEntry(){
+  const month=document.getElementById('il-month').value;if(!month)return;
+  impEntries.unshift({month,families:parseInt(document.getElementById('il-fam').value)||0,food:parseInt(document.getElementById('il-food').value)||0,boxes:parseInt(document.getElementById('il-boxes').value)||0,hours:parseInt(document.getElementById('il-hours').value)||0,seniors:parseInt(document.getElementById('il-seniors').value)||0,funds:parseInt(document.getElementById('il-funds').value)||0,donors:parseInt(document.getElementById('il-donors').value)||0,notes:document.getElementById('il-notes').value});
+  impEntries.sort((a,b)=>b.month.localeCompare(a.month));
+  try{localStorage.setItem('gw-impact',JSON.stringify(impEntries));}catch{}
+  impRenderAll();toast('✅ Entry saved for '+mN(month));
+  navId('p07');
+}
+
+async function genReport(){
+  const btn=document.getElementById('rpt-btn');btn.disabled=true;btn.textContent='Generating...';
+  const out=document.getElementById('rpt-out');out.innerHTML='<div style="display:flex;justify-content:center;padding:14px"><div style="width:22px;height:22px;border:3px solid rgba(220,80,80,.2);border-top:3px solid #DC5050;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p07,
+        messages:[{role:'user',content:`Write a ${document.getElementById('rpt-type').value} for Gladewaves for ${document.getElementById('rpt-period').value}.\nFamilies served: ${document.getElementById('rpt-fam').value}\nFood distributed: ${document.getElementById('rpt-food').value} lbs\nVolunteer hours: ${document.getElementById('rpt-hours').value}\nSeniors served at luncheons: ${document.getElementById('rpt-seniors').value}\nHighlights: ${document.getElementById('rpt-hi').value}`}]})});
+    const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
+  }catch{out.textContent='Failed.';}finally{btn.disabled=false;btn.textContent='🤖 Generate Report';}
+}
+
+// === GRANT FINDER ===
+const GF_CATS=[
+  {id:'food',ico:'🍞',name:'Food Security'},{id:'hunger',ico:'🥗',name:'Hunger Relief'},
+  {id:'senior',ico:'👴',name:'Senior Services'},{id:'housing',ico:'🏠',name:'Transitional Housing'},
+  {id:'community',ico:'🏘️',name:'Community Dev'},{id:'louisiana',ico:'⚜️',name:'Louisiana Funders'},
+  {id:'faith',ico:'⛪',name:'Faith-Based'},{id:'children',ico:'👶',name:'Children & Youth'},
+];
+let gfCats=['food','hunger','louisiana'],gfSaved=[],gfBusy=false;
+try{const s=localStorage.getItem('gw-gf');if(s)gfSaved=JSON.parse(s);}catch{}
+
+document.getElementById('gf-cats').innerHTML=GF_CATS.map(c=>`
+  <div class="gfcat ${gfCats.includes(c.id)?'on':''}" onclick="gfToggle('${c.id}',this)">
+    <div class="gfcati">${c.ico}</div>
+    <div class="gfcatn">${c.name}</div>
+  </div>`).join('');
+
+function gfToggle(id,el){
+  if(gfCats.includes(id)){if(gfCats.length>1){gfCats=gfCats.filter(c=>c!==id);el.classList.remove('on');}}
+  else{gfCats.push(id);el.classList.add('on');}
+}
+
+async function findGrants(){
+  if(gfBusy)return;gfBusy=true;
+  const btn=document.getElementById('gf-btn');btn.disabled=true;btn.textContent='🔍 Searching...';
+  const el=document.getElementById('gf-results');
+  const cats=gfCats.map(id=>GF_CATS.find(c=>c.id===id)?.name||id).join(', ');
+  const size=document.getElementById('gf-size').value;
+  const type=document.getElementById('gf-type').value;
+  const extra=document.getElementById('gf-extra').value;
+  el.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:36px"><div class="spinr"></div><div style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(64,200,192,.45);letter-spacing:.09em">Searching for Gladewaves opportunities…</div></div>`;
+  const prompt=`You are a grant research specialist for Gladewaves, a New Orleans Louisiana nonprofit (gladewaves.org). Founded 2018 by Janie Glade. 4505 S. Claiborne Ave, New Orleans, LA 70125. Programs: (1) Big Red Box — 12 barrier-free community food pantry locations across Metro N.O. at churches, police stations, schools. (2) HandUp — $500 housewares + $100 grocery cards for people leaving transitional housing (Unity for Homeless, Hotel Hope, Innocence Project). (3) Senior Outreach — free monthly luncheons for 55+, 6 sites, Sept-June. (4) Thanksgiving Day Lunch. Need: 87,170 food insecure in Orleans Parish, 52% can't afford basics, 39% children in poverty.\n\nFind 6 realistic, specific grant opportunities. Focus areas: ${cats}.${size?` Size: ${size}.`:''}${type?` Funder type: ${type}.`:''}${extra?` Additional: ${extra}`:''}\n\nRespond ONLY with a valid JSON array — no text before or after:\n[{"name":"Program name","funder":"Organization","amount":"Range","deadline":"Next deadline","description":"2-3 sentences why Gladewaves qualifies","url":"official URL or empty string","tags":["tag1","tag2","tag3"],"fit":"high|medium|low","fitReason":"One sentence on fit"}]`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Return only valid JSON arrays with no markdown, no preamble, no explanation.',messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    let grants=[];
+    try{grants=JSON.parse((data.content?.[0]?.text||'[]').replace(/```json|```/g,'').trim());}catch{}
+    if(!Array.isArray(grants)||!grants.length){el.innerHTML='<div style="text-align:center;padding:36px;color:var(--muted)">No results found. Try different categories.</div>';return;}
+    el.innerHTML=`<div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(64,200,192,.4);margin-bottom:10px;letter-spacing:.08em">FOUND ${grants.length} OPPORTUNITIES · ${cats.toUpperCase()}</div>`+
+    grants.map((g,i)=>{
+      const fc={high:'#5A9E6F',medium:'#C8A830',low:'#E07840'}[g.fit||'medium']||'#C8A830';
+      const fb={high:'rgba(90,158,111,.1)',medium:'rgba(200,168,48,.1)',low:'rgba(224,120,64,.1)'}[g.fit||'medium']||'rgba(200,168,48,.1)';
+      const nameE=(g.name||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+      const funderE=(g.funder||'').replace(/'/g,"\\'");
+      return `<div class="gfr" style="animation-delay:${i*.06}s">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">
+          <div class="gfname">${g.name||'Grant Opportunity'}</div>
+          <span class="pill" style="background:${fb};border:1px solid ${fc}44;color:${fc};flex-shrink:0;margin-left:6px">${g.fit||'medium'} fit</span>
+        </div>
+        <div class="gffunder">🏛️ ${g.funder||''}</div>
+        <div class="gfdesc">${g.description||''}</div>
+        ${g.fitReason?`<div style="font-size:10px;color:rgba(64,200,192,.45);margin-bottom:6px;font-style:italic">✦ ${g.fitReason}</div>`:''}
+        <div class="gftags">${(g.tags||[]).map(t=>`<span class="gftag">${t}</span>`).join('')}${g.amount?`<span class="gftag">💰 ${g.amount}</span>`:''}${g.deadline?`<span class="gftag">📅 ${g.deadline}</span>`:''}</div>
+        <div class="gfacts">
+          ${g.url?`<a href="${g.url}" target="_blank" style="flex:1;padding:6px;border-radius:6px;text-align:center;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;background:rgba(64,200,192,.07);border:1px solid rgba(64,200,192,.18);color:#40C8C0;text-decoration:none">🔗 Visit</a>`:''}
+          <button onclick="gfSaveOne(${i})" style="flex:1;padding:6px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;background:rgba(200,151,58,.07);border:1px solid rgba(200,151,58,.18);color:var(--gold)">⭐ Save</button>
+          <button onclick="cs('p06','Research the grant &quot;${nameE}&quot; from ${funderE} and help me write a Gladewaves proposal for it.')" style="flex:1;padding:6px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;background:rgba(200,168,48,.07);border:1px solid rgba(200,168,48,.18);color:#C8A830">📝 Draft</button>
+        </div>
+      </div>`;
+    }).join('');
+    // store results for save-by-index
+    window._gfResults=grants;
+  }catch{el.innerHTML='<div style="text-align:center;padding:36px;color:var(--muted)">Search failed. Please try again.</div>';}
+  finally{gfBusy=false;btn.disabled=false;btn.textContent='🔍 Find Grant Opportunities for Gladewaves';}
+}
+
+window._gfResults=[];
+function gfSaveOne(i){const g=window._gfResults[i];if(!g)return;gfSaved.unshift({...g,savedAt:new Date().toLocaleDateString()});try{localStorage.setItem('gw-gf',JSON.stringify(gfSaved));}catch{}gfSavedRender();toast('⭐ Saved!');}
+
+function gfSavedRender(){
+  const el=document.getElementById('gf-saved-list');
+  document.getElementById('gf-saved-ct').textContent=gfSaved.length+' saved';
+  if(!gfSaved.length){el.innerHTML='<div style="text-align:center;padding:36px;color:var(--muted);font-family:\'Playfair Display\',serif;font-style:italic">No saved opportunities yet.</div>';return;}
+  el.innerHTML=gfSaved.map((g,i)=>{
+    const fc={high:'#5A9E6F',medium:'#C8A830',low:'#E07840'}[g.fit||'medium']||'#C8A830';
+    const fb={high:'rgba(90,158,111,.1)',medium:'rgba(200,168,48,.1)',low:'rgba(224,120,64,.1)'}[g.fit||'medium']||'rgba(200,168,48,.1)';
+    const nameE=(g.name||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    const funderE=(g.funder||'').replace(/'/g,"\\'");
+    return `<div class="gfr"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px"><div class="gfname">${g.name||'Grant'}</div><span class="pill" style="background:${fb};border:1px solid ${fc}44;color:${fc};flex-shrink:0;margin-left:5px">${g.fit||'medium'} fit</span></div><div class="gffunder">🏛️ ${g.funder||''} ${g.savedAt?'· Saved '+g.savedAt:''}</div>${g.amount||g.deadline?`<div class="gftags">${g.amount?`<span class="gftag">💰 ${g.amount}</span>`:''}${g.deadline?`<span class="gftag">📅 ${g.deadline}</span>`:''}</div>`:''}<div class="gfacts">${g.url?`<a href="${g.url}" target="_blank" style="flex:1;padding:5px;border-radius:6px;text-align:center;font-family:'DM Mono',monospace;font-size:8px;background:rgba(64,200,192,.07);border:1px solid rgba(64,200,192,.18);color:#40C8C0;text-decoration:none">🔗 Visit</a>`:''}<button onclick="cs('p06','Research &quot;${nameE}&quot; from ${funderE} and write a Gladewaves grant proposal for it.')" style="flex:1;padding:5px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;background:rgba(200,168,48,.07);border:1px solid rgba(200,168,48,.18);color:#C8A830">📝 Draft</button><button onclick="gfSaved.splice(${i},1);try{localStorage.setItem('gw-gf',JSON.stringify(gfSaved))}catch{};gfSavedRender()" style="padding:5px 9px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;background:var(--ibg);border:1px solid rgba(255,80,80,.13);color:#5A2828">✕</button></div></div>`;
+  }).join('');}
+
+// === FOOD RESCUE CAMPAIGN ===
+let frType='facebook';
+function frSetType(t,el){frType=t;document.querySelectorAll('#tc09d .plato').forEach(e=>{e.classList.remove('on');e.style.borderColor='var(--border)';e.style.background='var(--ibg)';});el.classList.add('on');el.style.borderColor='#E07840';el.style.background='rgba(224,120,64,.1)';}
+
+async function genCouncil(){
+  const name=document.getElementById('co-name').value.trim()||'Council Member';
+  const btn=document.getElementById('co-btn');btn.disabled=true;btn.textContent='Writing...';
+  const out=document.getElementById('co-out');
+  out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
+        messages:[{role:'user',content:`Generate a ${document.getElementById('co-type').value} for Gladewaves.\nRecipient: ${name}\nDistrict/context: ${document.getElementById('co-district').value||'New Orleans City Council'}\nKey angle to emphasize: ${document.getElementById('co-angle').value}\nFrom: Janie Glade, Executive Director, Gladewaves\nDate: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`}]})});
+    const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
+  }catch{out.textContent='Failed. Try again.';}finally{btn.disabled=false;btn.textContent='🏛️ Generate';}
+}
+
+async function genBizLetter(){
+  const biz=document.getElementById('biz-name').value.trim()||'[Business Name]';
+  const btn=document.getElementById('biz-btn');btn.disabled=true;btn.textContent='Writing...';
+  const out=document.getElementById('biz-out');
+  out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
+        messages:[{role:'user',content:`Write a ${document.getElementById('biz-tone').value} to ${biz} inviting them to join the Gladewaves Food Rescue Initiative.\nContact: ${document.getElementById('biz-contact').value||'General Manager'}\nBusiness type: ${document.getElementById('biz-type').value}\nWhat we are asking for: ${document.getElementById('biz-ask').value}\nFrom: Janie Glade, Executive Director, Gladewaves, 4505 S. Claiborne Ave, New Orleans, LA 70125, 504-875-1718\nLead with liability protection. Mention federal Good Samaritan Act. Keep professional and brief.`}]})});
+    const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
+  }catch{out.textContent='Failed. Try again.';}finally{btn.disabled=false;btn.textContent='🏨 Generate Letter';}
+}
+
+async function genFRPost(){
+  const btn=document.getElementById('fr-btn');btn.disabled=true;btn.textContent='Generating...';
+  const out=document.getElementById('fr-out');
+  out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
+  const platNames={facebook:'Facebook',instagram:'Instagram',nextdoor:'NextDoor',twitter:'Twitter/X',petition:'Community Petition',press:'Press Release'};
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
+        messages:[{role:'user',content:`Write a ${platNames[frType]||'social media'} post for the Gladewaves Food Rescue Campaign.\nFocus: ${document.getElementById('fr-focus').value}\nExtra details: ${document.getElementById('fr-extra').value||'none'}\nFollow all platform-specific length and format guidelines. For Instagram include 10-15 hashtags. For Twitter keep under 280 chars. For NextDoor be conversational and neighborhood-focused. For petition write compelling signature appeal text. For press release use AP style with New Orleans dateline and a quote from Janie Glade.`}]})});
+    const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
+  }catch{out.textContent='Failed. Try again.';}finally{btn.disabled=false;btn.textContent='📣 Generate';}
+}
+
+// === TOAST ===
+function toast(msg){let t=document.getElementById('_toast');if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid rgba(200,151,58,.32);color:var(--gold);font-family:DM Mono,monospace;font-size:9px;padding:7px 16px;border-radius:30px;z-index:99999;white-space:nowrap;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 18px var(--shadow)';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);}
+
+// === INIT ===
+rbRenderAll();donorRender();volRender();shiftRender();grantRender();impRenderAll();gfSavedRender();
+</script>
+</body>
+</html>
