@@ -205,12 +205,15 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
 .loclst li:last-child{border-bottom:none}
 .locn{font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);margin-right:5px}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
-.bcard{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px;transition:background .3s,border-color .2s}
-.bcard:hover{border-color:rgba(200,151,58,.22)}
+.bcard{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px;transition:background .3s,border-color .2s;cursor:pointer}
+.bcard:hover{border-color:rgba(200,151,58,.28)}
 .bname{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);font-style:italic;margin-bottom:2px;transition:color .3s}
 .brole{font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px}
-.bbio{font-family:'Outfit',sans-serif;font-size:10px;color:var(--muted);line-height:1.6;max-height:72px;overflow:hidden;position:relative}
-.bbio::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:linear-gradient(transparent,var(--card))}
+.bbio{font-family:'Outfit',sans-serif;font-size:10px;color:var(--muted);line-height:1.6;max-height:68px;overflow:hidden;position:relative;transition:max-height .35s ease}
+.bbio.exp{max-height:500px}
+.bbio::after{content:'';position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(transparent,var(--card));transition:opacity .25s;pointer-events:none}
+.bbio.exp::after{opacity:0}
+.bread{font-family:'DM Mono',monospace;font-size:7px;color:var(--gold);text-transform:uppercase;letter-spacing:.09em;margin-top:5px;opacity:.65;display:block}
 .crow{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--border2)}
 .crow:last-child{border-bottom:none}
 .cicon{font-size:16px;width:28px;text-align:center;flex-shrink:0}
@@ -398,17 +401,17 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
   <div class="tc" id="ta-board">
     <h2 class="stl">Board of Directors</h2><p class="ssub">Hands-on leadership — every member is involved in every aspect of our programming</p>
     <div class="bgrid">
-      <div class="bcard"><div class="bname">Janie Glade</div><div class="brole">Executive Director / Founder</div><div class="bbio">Loyola University New Orleans graduate. Owned and operated a Social Event planning company for 22 years. Served on boards of local nonprofits before founding Gladewaves in January 2018. The mastermind behind Gladewaves.</div></div>
-      <div class="bcard"><div class="bname">Louis Glade, MD</div><div class="brole">President, Board of Directors</div><div class="bbio">Graduate of LSU and LSU Medical School. Brings managerial skills and a lifelong history of participation on New Orleans nonprofit boards. Passion for helping people extends well beyond his work as a physician.</div></div>
-      <div class="bcard"><div class="bname">Susan Peppard, Esq.</div><div class="brole">Board Member</div><div class="bbio">Honors B.A. in History from UNO; J.D. from Tulane University. Former Director of Central Staff, Louisiana Fourth Circuit Court of Appeal. Brings passion for New Orleans and helping others.</div></div>
-      <div class="bcard"><div class="bname">Judy Kang, MD</div><div class="brole">Board Member</div><div class="bbio">First-generation Korean immigrant; naturalized citizen at 19. Raised in Greater N.O. area. Practicing physician on the Westbank since 2003. Parents raised 4 children on low income — she wants to help others succeed.</div></div>
-      <div class="bcard"><div class="bname">Matt Berger, JD, MBA</div><div class="brole">Board Member</div><div class="bbio">Regional President of Gulf States (LA/MS) for Humana. Former Division CFO, Medicare Central Division. Extensive background in M&A, finance, and healthcare operations.</div></div>
-      <div class="bcard"><div class="bname">Marylyn Rigby</div><div class="brole">Board Member</div><div class="bbio">Former Senior Director of Marketing & Investor Relations, SteadyMed Therapeutics. Graduate of University of New Orleans and Academy of The Sacred Heart.</div></div>
-      <div class="bcard"><div class="bname">Catherine Hudson, MD</div><div class="brole">Board Member</div><div class="bbio">Podiatric medicine private practice. Volunteer mentor, Big Brothers/Big Sisters. Former board member, Emerging Philanthropists of New Orleans (EPNO).</div></div>
-      <div class="bcard"><div class="bname">Jeff Fernandez</div><div class="brole">Board Member</div><div class="bbio">CEO, Ochsner Health Plan. Former SVP, Medicare Advantage at Humana (1.3M lives, western U.S.). 20+ years in health plan operations. BS from LSU, MBA from UNO, JD from Loyola.</div></div>
-      <div class="bcard"><div class="bname">Michael Carbo, Esq.</div><div class="brole">Board Member</div><div class="bbio">B.S.E. Electrical Engineering and J.D. cum laude, both Tulane. Member Louisiana Bar since 1982. President, Tulane Biomedical Engineering Advisory Board. Past president, T.R.E.E.</div></div>
-      <div class="bcard"><div class="bname">David Linnemeyer</div><div class="brole">Board Member</div><div class="bbio">Retired Manager, Blood Bank & Transfusion Service; Inspector, American Association of Blood Banks. Coordinates Gladewaves' Intern Program and annual coat drive.</div></div>
-      <div class="bcard"><div class="bname">Renée Davenport</div><div class="brole">Board Member</div><div class="bbio">34 years at Catholic Charities Archdiocese of New Orleans; Director, Food for Seniors program. MBA, Univ. of Phoenix. Native New Orleanian. "If I can help somebody as I travel along, my living shall not be in vain."</div></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Janie Glade</div><div class="brole">Executive Director / Founder</div><div class="bbio">Loyola University New Orleans graduate. Owned and operated a Social Event planning company for 22 years. Served on boards of local nonprofits before founding Gladewaves in January 2018. The mastermind behind Gladewaves.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Louis Glade, MD</div><div class="brole">President, Board of Directors</div><div class="bbio">Graduate of LSU and LSU Medical School. Brings managerial skills and a lifelong history of participation on New Orleans nonprofit boards. Passion for helping people extends well beyond his work as a physician.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Susan Peppard, Esq.</div><div class="brole">Board Member</div><div class="bbio">Honors B.A. in History from UNO; J.D. from Tulane University. Former Director of Central Staff, Louisiana Fourth Circuit Court of Appeal. Brings passion for New Orleans and helping others.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Judy Kang, MD</div><div class="brole">Board Member</div><div class="bbio">First-generation Korean immigrant; naturalized citizen at 19. Raised in Greater N.O. area. Practicing physician on the Westbank since 2003. Parents raised 4 children on low income — she wants to help others succeed.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Matt Berger, JD, MBA</div><div class="brole">Board Member</div><div class="bbio">Regional President of Gulf States (LA/MS) for Humana. Former Division CFO, Medicare Central Division. Extensive background in M&A, finance, and healthcare operations.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Marylyn Rigby</div><div class="brole">Board Member</div><div class="bbio">Former Senior Director of Marketing & Investor Relations, SteadyMed Therapeutics. Graduate of University of New Orleans and Academy of The Sacred Heart.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Catherine Hudson, MD</div><div class="brole">Board Member</div><div class="bbio">Podiatric medicine private practice. Volunteer mentor, Big Brothers/Big Sisters. Former board member, Emerging Philanthropists of New Orleans (EPNO).</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Jeff Fernandez</div><div class="brole">Board Member</div><div class="bbio">CEO, Ochsner Health Plan. Former SVP, Medicare Advantage at Humana (1.3M lives, western U.S.). 20+ years in health plan operations. BS from LSU, MBA from UNO, JD from Loyola.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Michael Carbo, Esq.</div><div class="brole">Board Member</div><div class="bbio">B.S.E. Electrical Engineering and J.D. cum laude, both Tulane. Member Louisiana Bar since 1982. President, Tulane Biomedical Engineering Advisory Board. Past president, T.R.E.E.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">David Linnemeyer</div><div class="brole">Board Member</div><div class="bbio">Retired Manager, Blood Bank & Transfusion Service; Inspector, American Association of Blood Banks. Coordinates Gladewaves' Intern Program and annual coat drive.</div><span class="bread">▼ tap to read more</span></div>
+      <div class="bcard" onclick="this.querySelector('.bbio').classList.toggle('exp');this.querySelector('.bread').textContent=this.querySelector('.bbio').classList.contains('exp')?'▲ collapse':'▼ tap to read more'"><div class="bname">Renée Davenport</div><div class="brole">Board Member</div><div class="bbio">34 years at Catholic Charities Archdiocese of New Orleans; Director, Food for Seniors program. MBA, Univ. of Phoenix. Native New Orleanian. "If I can help somebody as I travel along, my living shall not be in vain."</div><span class="bread">▼ tap to read more</span></div>
     </div>
   </div>
   <div class="tc" id="ta-contact">
@@ -1100,11 +1103,26 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);disp
 <script>
 // === API KEY MANAGEMENT ===
 let AKEY='';
+
 function initKey(){
   const saved=localStorage.getItem('gw-apikey');
-  if(saved){AKEY=saved;document.getElementById('ak-overlay').style.display='none';}
-  else{document.getElementById('ak-overlay').style.display='flex';}
+  if(saved){
+    AKEY=saved;
+    document.getElementById('ak-overlay').style.display='none';
+  } else {
+    // Only show overlay if NOT inside Claude.ai
+    try{
+      if(window.parent===window||!document.referrer.includes('claude.ai')){
+        document.getElementById('ak-overlay').style.display='flex';
+      } else {
+        document.getElementById('ak-overlay').style.display='none';
+      }
+    }catch{
+      document.getElementById('ak-overlay').style.display='none';
+    }
+  }
 }
+
 function saveKey(){
   const val=document.getElementById('ak-input').value.trim();
   if(!val||!val.startsWith('sk-')){toast('Please enter a valid API key starting with sk-');return;}
@@ -1113,7 +1131,16 @@ function saveKey(){
   document.getElementById('ak-overlay').style.display='none';
   toast('✅ API key saved — all AI tools are now active!');
 }
-function getHeaders(){return{'Content-Type':'application/json','x-api-key':AKEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
+
+function getHeaders(){
+  const h={'Content-Type':'application/json'};
+  if(AKEY){
+    h['x-api-key']=AKEY;
+    h['anthropic-version']='2023-06-01';
+    h['anthropic-dangerous-direct-browser-access']='true';
+  }
+  return h;
+}
 
 // === THEME ===
 let dark=false;
@@ -1183,7 +1210,7 @@ const ACS={p01:['#C8973A','#7A5010'],p02:['#CC2222','#881010'],p03:['#3A9E68','#
 
 async function cs(pid,override){
   if(cLock[pid])return;
-  if(!AKEY){document.getElementById('ak-overlay').style.display='flex';toast('Please enter your API key first');return;}
+  
   const pg=document.getElementById(pid);
   const ta=pg.querySelector('textarea');
   const msg=override||(ta?.value.trim());
@@ -1204,7 +1231,7 @@ async function cs(pid,override){
   let extra='';
   if(pid==='p02')extra='\n\nCurrent box data: '+boxes.map(b=>`${b.name}: ${b.status.toUpperCase()} ${b.status!=='outofservice'?'('+b.level+'%)':''}`).join(', ');
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:(SYS[pid]||'')+extra,messages:cHist[pid]})});
     const d=await res.json();
     const reply=d.content?.[0]?.text||'Something went wrong. Please try again.';
@@ -1360,13 +1387,14 @@ document.getElementById('platg').innerHTML=Object.entries(PLATS).map(([k,p])=>`
 function setPlatform(k,el){curPlat=k;document.querySelectorAll('.plato').forEach(e=>e.classList.remove('on'));el.classList.add('on');}
 
 async function socGen(){
+  
   if(socBusy)return;
   const topic=document.getElementById('soc-topic').value.trim();if(!topic)return;
   socBusy=true;const btn=document.getElementById('soc-gen-btn');btn.disabled=true;btn.textContent='✨ Generating...';
   document.getElementById('soc-out').innerHTML='<div style="display:flex;justify-content:center;padding:36px"><div style="width:24px;height:24px;border:3px solid rgba(58,158,104,.15);border-top:3px solid #3A9E68;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   document.getElementById('soc-acts').innerHTML='';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p03,
         messages:[{role:'user',content:`Generate a ${PLATS[curPlat].name} post for Gladewaves.\nTopic: ${topic}\nExtra context: ${document.getElementById('soc-ctx').value||'none'}\nFollow all format and length guidelines for this platform.`}]})});
     const data=await res.json();
@@ -1411,12 +1439,13 @@ function donorRender(){
 function donorAdd(){const name=document.getElementById('nd-name').value.trim();if(!name)return;donors.push({id:'d'+Date.now(),name,email:document.getElementById('nd-email').value,amt:parseFloat(document.getElementById('nd-amt').value)||0,status:document.getElementById('nd-status').value,last:'Just added',notes:''});document.getElementById('m-adddonor').classList.remove('open');donorRender();toast('✅ Donor added: '+name);}
 
 async function planCampaign(){
+  
   const goal=document.getElementById('camp-goal').value.trim();if(!goal)return;
   const btn=document.getElementById('camp-btn');btn.disabled=true;btn.textContent='Planning...';
   const out=document.getElementById('camp-out');out.style.display='block';
   out.innerHTML='<div style="display:flex;justify-content:center;padding:14px"><div style="width:22px;height:22px;border:3px solid rgba(168,100,220,.2);border-top:3px solid #A864DC;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p04,
         messages:[{role:'user',content:`Full fundraising campaign plan for Gladewaves.\nGoal: ${goal}\nTimeline: ${document.getElementById('camp-time').value}\nAudience: ${document.getElementById('camp-aud').value}\nContext: ${document.getElementById('camp-ctx').value}`}]})});
     const d=await res.json();out.innerHTML=fmt(d.content?.[0]?.text||'Error.');
@@ -1467,11 +1496,12 @@ function grantRender(){
 function grantAdd(){const f=document.getElementById('ng-funder').value.trim();if(!f)return;grantTracker.push({id:'g'+Date.now(),funder:f,amt:document.getElementById('ng-amount').value,deadline:document.getElementById('ng-deadline').value,status:document.getElementById('ng-status').value});document.getElementById('m-addgrant').classList.remove('open');grantRender();toast('✅ Grant added: '+f);}
 
 async function buildProposal(){
+  
   const funder=document.getElementById('gb-funder').value.trim();if(!funder)return;
   const btn=document.getElementById('gb-btn');btn.disabled=true;btn.textContent='Writing...';
   const out=document.getElementById('gb-out');out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(200,168,48,.2);border-top:3px solid #C8A830;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p06,
         messages:[{role:'user',content:`Write the ${document.getElementById('gb-sec').value} for a Gladewaves grant.\nFunder: ${funder}\nAmount: ${document.getElementById('gb-amount').value}\nProgram focus: ${document.getElementById('gb-prog').value}\nSpecial requirements: ${document.getElementById('gb-ctx').value}`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1520,10 +1550,11 @@ function logEntry(){
 }
 
 async function genReport(){
+  
   const btn=document.getElementById('rpt-btn');btn.disabled=true;btn.textContent='Generating...';
   const out=document.getElementById('rpt-out');out.innerHTML='<div style="display:flex;justify-content:center;padding:14px"><div style="width:22px;height:22px;border:3px solid rgba(220,80,80,.2);border-top:3px solid #DC5050;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p07,
         messages:[{role:'user',content:`Write a ${document.getElementById('rpt-type').value} for Gladewaves for ${document.getElementById('rpt-period').value}.\nFamilies served: ${document.getElementById('rpt-fam').value}\nFood distributed: ${document.getElementById('rpt-food').value} lbs\nVolunteer hours: ${document.getElementById('rpt-hours').value}\nSeniors served at luncheons: ${document.getElementById('rpt-seniors').value}\nHighlights: ${document.getElementById('rpt-hi').value}`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1552,6 +1583,7 @@ function gfToggle(id,el){
 }
 
 async function findGrants(){
+  
   if(gfBusy)return;gfBusy=true;
   const btn=document.getElementById('gf-btn');btn.disabled=true;btn.textContent='🔍 Searching...';
   const el=document.getElementById('gf-results');
@@ -1562,7 +1594,7 @@ async function findGrants(){
   el.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:36px"><div class="spinr"></div><div style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(64,200,192,.45);letter-spacing:.09em">Searching for Gladewaves opportunities…</div></div>`;
   const prompt=`You are a grant research specialist for Gladewaves, a New Orleans Louisiana nonprofit (gladewaves.org). Founded 2018 by Janie Glade. 4505 S. Claiborne Ave, New Orleans, LA 70125. Programs: (1) Big Red Box — 12 barrier-free community food pantry locations across Metro N.O. at churches, police stations, schools. (2) HandUp — $500 housewares + $100 grocery cards for people leaving transitional housing (Unity for Homeless, Hotel Hope, Innocence Project). (3) Senior Outreach — free monthly luncheons for 55+, 6 sites, Sept-June. (4) Thanksgiving Day Lunch. Need: 87,170 food insecure in Orleans Parish, 52% can't afford basics, 39% children in poverty.\n\nFind 6 realistic, specific grant opportunities. Focus areas: ${cats}.${size?` Size: ${size}.`:''}${type?` Funder type: ${type}.`:''}${extra?` Additional: ${extra}`:''}\n\nRespond ONLY with a valid JSON array — no text before or after:\n[{"name":"Program name","funder":"Organization","amount":"Range","deadline":"Next deadline","description":"2-3 sentences why Gladewaves qualifies","url":"official URL or empty string","tags":["tag1","tag2","tag3"],"fit":"high|medium|low","fitReason":"One sentence on fit"}]`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Return only valid JSON arrays with no markdown, no preamble, no explanation.',messages:[{role:'user',content:prompt}]})});
     const data=await res.json();
     let grants=[];
@@ -1616,12 +1648,13 @@ let frType='facebook';
 function frSetType(t,el){frType=t;document.querySelectorAll('#tc09d .plato').forEach(e=>{e.classList.remove('on');e.style.borderColor='var(--border)';e.style.background='var(--ibg)';});el.classList.add('on');el.style.borderColor='#E07840';el.style.background='rgba(224,120,64,.1)';}
 
 async function genCouncil(){
+  
   const name=document.getElementById('co-name').value.trim()||'Council Member';
   const btn=document.getElementById('co-btn');btn.disabled=true;btn.textContent='Writing...';
   const out=document.getElementById('co-out');
   out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
         messages:[{role:'user',content:`Generate a ${document.getElementById('co-type').value} for Gladewaves.\nRecipient: ${name}\nDistrict/context: ${document.getElementById('co-district').value||'New Orleans City Council'}\nKey angle to emphasize: ${document.getElementById('co-angle').value}\nFrom: Janie Glade, Executive Director, Gladewaves\nDate: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1629,12 +1662,13 @@ async function genCouncil(){
 }
 
 async function genBizLetter(){
+  
   const biz=document.getElementById('biz-name').value.trim()||'[Business Name]';
   const btn=document.getElementById('biz-btn');btn.disabled=true;btn.textContent='Writing...';
   const out=document.getElementById('biz-out');
   out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
         messages:[{role:'user',content:`Write a ${document.getElementById('biz-tone').value} to ${biz} inviting them to join the Gladewaves Food Rescue Initiative.\nContact: ${document.getElementById('biz-contact').value||'General Manager'}\nBusiness type: ${document.getElementById('biz-type').value}\nWhat we are asking for: ${document.getElementById('biz-ask').value}\nFrom: Janie Glade, Executive Director, Gladewaves, 4505 S. Claiborne Ave, New Orleans, LA 70125, 504-875-1718\nLead with liability protection. Mention federal Good Samaritan Act. Keep professional and brief.`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1642,12 +1676,13 @@ async function genBizLetter(){
 }
 
 async function genFRPost(){
+  
   const btn=document.getElementById('fr-btn');btn.disabled=true;btn.textContent='Generating...';
   const out=document.getElementById('fr-out');
   out.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div style="width:22px;height:22px;border:3px solid rgba(224,120,64,.2);border-top:3px solid #E07840;border-radius:50%;animation:spin 1s linear infinite"></div></div>';
   const platNames={facebook:'Facebook',instagram:'Instagram',nextdoor:'NextDoor',twitter:'Twitter/X',petition:'Community Petition',press:'Press Release'};
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS.p09,
         messages:[{role:'user',content:`Write a ${platNames[frType]||'social media'} post for the Gladewaves Food Rescue Campaign.\nFocus: ${document.getElementById('fr-focus').value}\nExtra details: ${document.getElementById('fr-extra').value||'none'}\nFollow all platform-specific length and format guidelines. For Instagram include 10-15 hashtags. For Twitter keep under 280 chars. For NextDoor be conversational and neighborhood-focused. For petition write compelling signature appeal text. For press release use AP style with New Orleans dateline and a quote from Janie Glade.`}]})});
     const d=await res.json();out.textContent=d.content?.[0]?.text||'Error.';
@@ -1664,6 +1699,7 @@ const COUNCIL_MEMBERS={
 };
 
 async function addrLookup(){
+  
   const addr=document.getElementById('al-addr').value.trim();
   const city=document.getElementById('al-city').value;
   if(!addr){toast('Please enter a street address');return;}
@@ -1701,7 +1737,7 @@ DISTRICT: [letter] — [name] — [email] — [phone]
 [Full document text]`;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:getHeaders(),
+    const res=await fetch('https://gladewaves-proxy.jmking1999.workers.dev',{method:'POST',headers:getHeaders(),
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:SYS.p09,messages:[{role:'user',content:prompt}]})});
     const d=await res.json();
     const text=d.content?.[0]?.text||'Error.';
